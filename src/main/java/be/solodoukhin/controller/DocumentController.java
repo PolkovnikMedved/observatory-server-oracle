@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Author: Solodoukhin Viktor
@@ -28,7 +31,7 @@ public class DocumentController {
     }
 
     @GetMapping("/all")
-    public Iterable<Document> getPage(@RequestAttribute(value = "page", required = false) Integer pageNumber)
+    public Iterable<Document> getPage(@RequestParam(value = "page", required = false) Integer pageNumber)
     {
         LOGGER.info("Call to DocumentController.getPage with page = {}", pageNumber);
         if (pageNumber == null){
@@ -38,5 +41,28 @@ public class DocumentController {
         Pageable pageable = PageRequest.of(pageNumber, 15, Sort.Direction.ASC, "number");
 
         return this.documentRepository.findAll(pageable);
+    }
+
+    @GetMapping("/allFiltered")
+    public Iterable<Document> getFilteredPage(
+            @RequestParam(value = "documentNumber", required = false) Integer documentNumber,
+            @RequestParam(value = "dfaNumber", required = false) String dfaNumber,
+            @RequestParam(value = "documentName", required = false) String documentName,
+            @RequestParam(value = "documentCategory", required = false) String documentCategory,
+            @RequestParam(value = "structureName", required = false) String structureName,
+            @RequestParam(value = "author", required = false) String author,
+            @RequestParam(value = "page", required = false) Integer pageNumber
+    )
+    {
+        LOGGER.info("Call to DocumentController.getFilteredPage with page = {}", pageNumber);
+        if (pageNumber == null){
+            pageNumber = 0;
+        }
+
+        LOGGER.info(documentNumber + "/" + documentName + "/" + documentCategory);
+
+        Pageable pageable = PageRequest.of(pageNumber, 15, Sort.Direction.ASC, "number");
+
+        return this.documentRepository.getAllByFilter(documentNumber, /*dfaNumber,*/ documentName, documentCategory/*, structureName, author*/, pageable);
     }
 }
