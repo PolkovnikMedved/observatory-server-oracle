@@ -1,6 +1,7 @@
 package be.solodoukhin.domain;
 
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 
@@ -19,10 +20,10 @@ public class Version {
     @Column(name = "NO_DFA")
     private String dfaName;
 
-    @ManyToOne
-    @JoinColumn(name = "NO_DOCUMENT")
-    private Document document;
+    @Column(name = "NO_DOCUMENT")
+    private int document;
 
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "NOM_STRUCTURE")
     private Structure structure;
@@ -48,11 +49,11 @@ public class Version {
         this.dfaName = dfaName;
     }
 
-    public Document getDocument() {
+    public int getDocument() {
         return document;
     }
 
-    public void setDocument(Document document) {
+    public void setDocument(int document) {
         this.document = document;
     }
 

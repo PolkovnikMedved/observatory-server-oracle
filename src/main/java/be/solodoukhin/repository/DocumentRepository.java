@@ -1,7 +1,7 @@
 package be.solodoukhin.repository;
 
 import be.solodoukhin.domain.Document;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,4 +10,4 @@ import org.springframework.stereotype.Repository;
  * Description: TODO
  */
 @Repository
-public interface DocumentRepository extends CrudRepository<Document, Integer> {}
+public interface DocumentRepository extends JpaRepository<Document, Integer> {}

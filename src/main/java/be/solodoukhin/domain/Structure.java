@@ -1,6 +1,8 @@
 package be.solodoukhin.domain;
 
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.util.List;
@@ -25,9 +27,11 @@ public class Structure {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "structure")
     private Set<Version> versions;
 
+    @JsonManagedReference
     @OneToMany
     @JoinColumn(name = "NOM_STRUCTURE_PARENT", referencedColumnName = "NOM_STRUCTURE")
     private List<StructureElement> children;

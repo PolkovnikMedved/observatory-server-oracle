@@ -17,3 +17,113 @@ CREATE TABLE DOCUMENT(
    CONSTRAINT DOC_PK PRIMARY KEY (NO_DOCUMENT),
    CONSTRAINT CAT_DOC_FK FOREIGN KEY (NO_CATEGORIE) REFERENCES CATEGORIE_DOCUMENTS(NO_CATEGORIE)
 );
+
+create table obs_structure(
+    NOM_STRUCTURE varchar(80) primary key,
+    TAG varchar(80),
+    DESCRIPTION varchar(767) not null,
+    AUTEUR_CREATION varchar(30) not null,
+    DT_CREATION date not null,
+    AUTEUR_MODIFICATION varchar(30),
+    DT_MODIFICATION date
+);
+
+create table obs_version(
+    NO_VERSION varchar(20) primary key,
+    NO_DFA varchar(20),
+    DESCRIPTION varchar(767) not null,
+    NO_DOCUMENT numeric(5, 0),
+    NOM_STRUCTURE varchar(80),
+    AUTEUR_CREATION varchar(30) not null,
+    DT_CREATION date not null,
+    AUTEUR_MODIFICATION varchar(30),
+    DT_MODIFICATION date,
+    constraint DOCUMENT_VERSION FOREIGN KEY (no_document) references document(no_document),
+    constraint VERSION_STRUCTURE FOREIGN KEY (NOM_STRUCTURE) references obs_structure(nom_structure)
+);
+
+create table obs_structure_element(
+    NO_ELEMENT numeric(19, 0) primary key,
+    TAG varchar(80),
+    DESCRIPTION varchar(767) not null,
+    SUITE numeric(5, 0) default 0,
+    OPTIONNEL char(1) default 'f',
+    REPETITIF char(1) default 'f',
+    NOM_STRUCTURE_PARENT varchar(80),
+    NOM_STRUCTURE_TYPE varchar(80),
+    AUTEUR_CREATION varchar(30) not null,
+    DT_CREATION date not null,
+    AUTEUR_MODIFICATION varchar(30),
+    DT_MODIFICATION date,
+    constraint EL_STRUCTURE_PARENT FOREIGN KEY (NOM_STRUCTURE_PARENT) references obs_structure(NOM_STRUCTURE),
+    constraint EL_STRUCTURE_TYPE FOREIGN KEY (NOM_STRUCTURE_TYPE) references obs_structure(NOM_STRUCTURE)
+);
+
+-- Validator for modification
+CREATE OR REPLACE TRIGGER VALID_VERSION_AUTHOR
+BEFORE UPDATE ON OBS_VERSION FOR EACH ROW
+BEGIN
+IF :NEW.AUTEUR_MODIFICATION IS NULL THEN
+raise_application_error(-20001, 'AUTEUR_MODIFICATION CAN NOT BE NULL.');
+END IF;
+
+IF :NEW.DT_MODIFICATION IS NULL THEN
+:NEW.DT_MODIFICATION := SYSDATE;
+END IF;
+END;
+
+CREATE OR REPLACE TRIGGER VALID_STRUCTURE_AUTHOR
+BEFORE UPDATE ON OBS_STRUCTURE FOR EACH ROW
+BEGIN
+IF :NEW.AUTEUR_MODIFICATION IS NULL THEN
+raise_application_error(-20001, 'AUTEUR_MODIFICATION CAN NOT BE NULL.');
+END IF;
+
+IF :NEW.DT_MODIFICATION IS NULL THEN
+:NEW.DT_MODIFICATION := SYSDATE;
+END IF;
+END;
+
+CREATE OR REPLACE TRIGGER VALID_STR_ELEMENT_AUTHOR
+BEFORE UPDATE ON OBS_STRUCTURE_ELEMENT FOR EACH ROW
+BEGIN
+IF :NEW.AUTEUR_MODIFICATION IS NULL THEN
+raise_application_error(-20001, 'AUTEUR_MODIFICATION CAN NOT BE NULL.');
+END IF;
+
+IF :NEW.DT_MODIFICATION IS NULL THEN
+:NEW.DT_MODIFICATION := SYSDATE;
+END IF;
+END;
+
+-- generate id for structure_element
+CREATE SEQUENCE structure_element_seq
+START WITH 19000
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;
+
+CREATE OR REPLACE TRIGGER trg_no_struct_el
+BEFORE INSERT ON obs_structure_element
+FOR EACH ROW
+BEGIN
+:new.no_element := structure_element_seq.nextval;
+END;
+
+-- Validate Optional, Repetitive and suite fields
+CREATE OR REPLACE TRIGGER VALID_STR_EL_OPT_REP
+BEFORE INSERT OR UPDATE ON OBS_STRUCTURE_ELEMENT
+                   FOR EACH ROW
+BEGIN
+IF :NEW.OPTIONNEL <> 't' AND :NEW.OPTIONNEL <> 'f' THEN
+raise_application_error(-20002, 'Optionnel field must be ''t'' or ''f'' ');
+END IF;
+
+IF :NEW.REPETITIF <> 't' AND :NEW.REPETITIF <> 'f' THEN
+raise_application_error(-20002, 'Repetitif field must be ''t'' or ''f'' ');
+END IF;
+
+IF :NEW.SUITE < 0 THEN
+raise_application_error(-20003, 'Suite must be >= 0');
+END IF;
+END;

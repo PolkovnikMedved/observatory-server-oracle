@@ -12,10 +12,12 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "OBS_STRUCTURE_ELEMENT")
+@SequenceGenerator(name = "structure_element_seq", sequenceName = "structure_element_seq", allocationSize = 1)
 public class StructureElement {
 
     @Id
     @Column(name = "NO_ELEMENT")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "structure_element_seq")
     private long id;
 
     @Column(name = "TAG")
@@ -27,7 +29,7 @@ public class StructureElement {
     @Column(name = "SUITE")
     private int sequence;
 
-    @Column(name = "OPTIONAL")
+    @Column(name = "OPTIONNEL")
     @Convert(converter = CharToBooleanConverter.class)
     private boolean optional;
 

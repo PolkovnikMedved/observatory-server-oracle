@@ -1,8 +1,10 @@
 package be.solodoukhin.domain;
 
 import be.solodoukhin.domain.embeddable.Label;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Author: Solodoukhin Viktor
@@ -19,6 +21,10 @@ public class Document {
 
     @Embedded
     private Label label;
+
+    @OneToMany
+    @JoinColumn(name = "NO_DOCUMENT", referencedColumnName = "NO_DOCUMENT")
+    private List<Version> versions;
 
     @ManyToOne
     @JoinColumn(name = "NO_CATEGORIE")
@@ -40,6 +46,14 @@ public class Document {
 
     public void setLabel(Label label) {
         this.label = label;
+    }
+
+    public List<Version> getVersions() {
+        return versions;
+    }
+
+    public void setVersions(List<Version> versions) {
+        this.versions = versions;
     }
 
     public DocumentCategory getCategory() {
