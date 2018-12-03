@@ -38,18 +38,21 @@ public class DocumentController {
             pageNumber = 0;
         }
 
+        if(pageNumber >= 1){
+            // Front-end problem forces us to mad solutions
+            pageNumber--;
+        }
+
         Pageable pageable = PageRequest.of(pageNumber, 15, Sort.Direction.ASC, "number");
 
-        return this.documentRepository.findAll(pageable);
+        return this.documentRepository.getAllWithCategory(pageable);
     }
 
     @GetMapping("/allFiltered")
     public Iterable<Document> getFilteredPage(
             @RequestParam(value = "documentNumber", required = false) Integer documentNumber,
-            @RequestParam(value = "dfaNumber", required = false) String dfaNumber,
             @RequestParam(value = "documentName", required = false) String documentName,
             @RequestParam(value = "documentCategory", required = false) String documentCategory,
-            @RequestParam(value = "structureName", required = false) String structureName,
             @RequestParam(value = "author", required = false) String author,
             @RequestParam(value = "page", required = false) Integer pageNumber
     )
@@ -63,6 +66,6 @@ public class DocumentController {
 
         Pageable pageable = PageRequest.of(pageNumber, 15, Sort.Direction.ASC, "number");
 
-        return this.documentRepository.getAllByFilter(documentNumber, /*dfaNumber,*/ documentName, documentCategory/*, structureName, author*/, pageable);
+        return this.documentRepository.getAllByFilter(documentNumber, documentName, documentCategory, author, pageable);
     }
 }

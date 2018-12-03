@@ -21,14 +21,17 @@ public interface DocumentRepository extends JpaRepository<Document, Integer> {
             "or d.label.frenchLabel like %:documentName% " +
             "or d.label.dutchLabel like %:documentName% " +
             "or d.category.label.frenchLabel like %:documentCategory% " +
-            "or d.category.label.dutchLabel like %:documentCategory%")
+            "or d.category.label.dutchLabel like %:documentCategory% " +
+            "or d.signature.createdBy like %:author% " +
+            "or d.signature.modifiedBy like %:author%")
     Page<Document> getAllByFilter(
             @Param(value = "documentNumber") Integer documentNumber,
-            //@Param(value = "dfaNumber") String dfaNumber,
             @Param(value = "documentName") String documentName,
             @Param(value = "documentCategory") String documentCategory,
-            //@Param(value = "structureName") String structureName,
-            //@Param(value = "author") String author,
+            @Param(value = "author") String author,
             Pageable pageable
     );
+
+    @Query("select d from Document d inner join d.category")
+    Page<Document> getAllWithCategory(Pageable pageable);
 }

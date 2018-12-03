@@ -1,7 +1,7 @@
 package be.solodoukhin.domain;
 
 import be.solodoukhin.domain.embeddable.Label;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import be.solodoukhin.domain.embeddable.PersistenceSignature;
 
 import javax.persistence.*;
 import java.util.List;
@@ -29,6 +29,9 @@ public class Document {
     @ManyToOne
     @JoinColumn(name = "NO_CATEGORIE")
     private DocumentCategory category;
+
+    @Embedded
+    private PersistenceSignature signature;
 
     public Document() {}
 
@@ -62,6 +65,14 @@ public class Document {
 
     public void setCategory(DocumentCategory category) {
         this.category = category;
+    }
+
+    public PersistenceSignature getSignature() {
+        return signature;
+    }
+
+    public void setSignature(PersistenceSignature signature) {
+        this.signature = signature;
     }
 
     @Override

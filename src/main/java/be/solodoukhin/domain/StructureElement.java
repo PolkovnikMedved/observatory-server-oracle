@@ -1,7 +1,7 @@
 package be.solodoukhin.domain;
 
-import be.solodoukhin.domain.converter.CharToBooleanConverter;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 
@@ -30,11 +30,11 @@ public class StructureElement {
     private int sequence;
 
     @Column(name = "OPTIONNEL")
-    @Convert(converter = CharToBooleanConverter.class)
+    @Type(type = "true_false")
     private boolean optional;
 
     @Column(name = "REPETITIF")
-    @Convert(converter = CharToBooleanConverter.class)
+    @Type(type = "true_false")
     private boolean repetitive;
 
     @ManyToOne
