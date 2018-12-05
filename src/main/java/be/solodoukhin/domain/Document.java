@@ -2,6 +2,9 @@ package be.solodoukhin.domain;
 
 import be.solodoukhin.domain.embeddable.Label;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,6 +17,7 @@ import java.util.List;
  */
 @Entity
 @Table(name = "DOCUMENT")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "number")
 public class Document implements Serializable {
 
     @Id
@@ -23,8 +27,7 @@ public class Document implements Serializable {
     @Embedded
     private Label label;
 
-    @OneToMany
-    @JoinColumn(name = "NO_DOCUMENT", referencedColumnName = "NO_DOCUMENT")
+    @OneToMany(mappedBy = "document")
     private List<Version> versions;
 
     @ManyToOne

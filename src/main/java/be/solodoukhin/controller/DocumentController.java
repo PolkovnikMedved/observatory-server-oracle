@@ -1,14 +1,12 @@
 package be.solodoukhin.controller;
 
 import be.solodoukhin.domain.Document;
+import be.solodoukhin.repository.DocumentRepository;
 import be.solodoukhin.service.DocumentFilterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Author: Solodoukhin Viktor
@@ -21,10 +19,12 @@ public class DocumentController {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(DocumentController.class);
     private DocumentFilterService documentFilterService;
+    private DocumentRepository documentRepository;
 
     @Autowired
-    public DocumentController(DocumentFilterService documentFilterService) {
+    public DocumentController(DocumentFilterService documentFilterService, DocumentRepository documentRepository) {
         this.documentFilterService = documentFilterService;
+        this.documentRepository = documentRepository;
     }
 
     @GetMapping("/all")
@@ -49,5 +49,12 @@ public class DocumentController {
         }
 
         return this.documentFilterService.getFilteredDocuments(documentNumber, documentName, documentCategory, createdBy, modifiedBy, pageNumber);
+    }
+
+    @GetMapping("/{id}")
+    public Document getOne(@PathVariable("id") Integer id)
+    {
+        LOGGER.info("Call to DocumentController.getOne with id = " + id);
+        return this.documentRepository.getOne(id);
     }
 }

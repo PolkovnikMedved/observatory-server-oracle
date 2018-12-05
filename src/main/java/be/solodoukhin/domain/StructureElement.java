@@ -1,6 +1,9 @@
 package be.solodoukhin.domain;
 
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -13,6 +16,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "OBS_STRUCTURE_ELEMENT2")
 @SequenceGenerator(name = "structure_element_seq", sequenceName = "structure_element_seq", allocationSize = 1)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class StructureElement {
 
     @Id
@@ -37,12 +41,14 @@ public class StructureElement {
     @Type(type = "true_false")
     private boolean repetitive;
 
-    @ManyToOne
-    @JoinColumn(name = "NOM_STRUCTURE_TYPE")
-    private Structure type;
+    @ManyToOne(cascade = {CascadeType.PERSIST})
+    @JoinColumn(name = "NOM_STRUCTURE_PARENT")
+    @JsonIgnore
+    private Structure parentStructure;
 
-    @Column(name = "NOM_STRUCTURE_PARENT")
-    private String parent;
+    @ManyToOne(cascade = {CascadeType.PERSIST})
+    @JoinColumn(name = "NOM_STRUCTURE_TYPE")
+    private Structure typeStructure;
 
     @Embedded
     private PersistenceSignature signature;
@@ -97,20 +103,20 @@ public class StructureElement {
         this.repetitive = repetitive;
     }
 
-    public Structure getType() {
-        return type;
+    public Structure getParentStructure() {
+        return parentStructure;
     }
 
-    public void setType(Structure type) {
-        this.type = type;
+    public void setParentStructure(Structure parentStructure) {
+        this.parentStructure = parentStructure;
     }
 
-    public String getParent() {
-        return parent;
+    public Structure getTypeStructure() {
+        return typeStructure;
     }
 
-    public void setParent(String parent) {
-        this.parent = parent;
+    public void setTypeStructure(Structure typeStructure) {
+        this.typeStructure = typeStructure;
     }
 
     public PersistenceSignature getSignature() {
@@ -130,8 +136,8 @@ public class StructureElement {
                 ", sequence=" + sequence +
                 ", optional=" + optional +
                 ", repetitive=" + repetitive +
-                ", type=" + type +
-                ", parent='" + parent + '\'' +
+                ", parentStructure=" + parentStructure +
+                ", typeStructure=" + typeStructure +
                 ", signature=" + signature +
                 '}';
     }

@@ -1,7 +1,10 @@
 package be.solodoukhin.domain.embeddable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 /**
  * Author: Solodoukhin Viktor
@@ -9,17 +12,21 @@ import javax.persistence.Embeddable;
  * Description: TODO
  */
 @Embeddable
-public class Label {
+public class Label implements Serializable {
 
+    @JsonProperty(value="frenchLabel", required = true)
     @Column(name = "LIBELLE_F")
     private String frenchLabel;
 
+    @JsonProperty(value="dutchLabel", required = true)
     @Column(name = "LIBELLE_N")
     private String dutchLabel;
 
+    @JsonProperty(value="englishLabel")
     @Column(name = "LIBELLE_X")
     private String englishLabel;
 
+    @JsonProperty(value="germanLabel")
     @Column(name = "LIBELLE_D")
     private String germanLabel;
 

@@ -1,8 +1,7 @@
 package be.solodoukhin.domain;
 
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -15,6 +14,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "OBS_STRUCTURE2")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
 public class Structure {
 
     @Id
@@ -27,14 +27,15 @@ public class Structure {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @JsonBackReference
+    @JsonIgnore
     @OneToMany(mappedBy = "structure")
     private Set<Version> versions;
 
-    @JsonManagedReference
-    @OneToMany
-    @JoinColumn(name = "NOM_STRUCTURE_PARENT", referencedColumnName = "NOM_STRUCTURE")
+    @OneToMany(mappedBy = "parentStructure")
     private List<StructureElement> children;
+
+    @OneToMany(mappedBy = "typeStructure")
+    private List<StructureElement> slaves;
 
     @Embedded
     private PersistenceSignature signature;
@@ -79,6 +80,14 @@ public class Structure {
 
     public void setChildren(List<StructureElement> children) {
         this.children = children;
+    }
+
+    public List<StructureElement> getSlaves() {
+        return slaves;
+    }
+
+    public void setSlaves(List<StructureElement> slaves) {
+        this.slaves = slaves;
     }
 
     public PersistenceSignature getSignature() {
