@@ -27,19 +27,19 @@ public class DocumentFilterService {
 
     public Page<Document> getFilteredDocuments(Integer documentNumber, String documentName, String categoryName, String createdBy, String modifiedBy, Integer pageNumber)
     {
-        if(documentName.trim().equalsIgnoreCase("")){
+        if(documentName != null && documentName.trim().equalsIgnoreCase("")){
             documentName = null;
         }
 
-        if(categoryName.trim().equalsIgnoreCase("")){
+        if(categoryName != null && categoryName.trim().equalsIgnoreCase("")){
             categoryName = null;
         }
 
-        if(createdBy.trim().equalsIgnoreCase("")){
+        if(createdBy != null && createdBy.trim().equalsIgnoreCase("")){
             createdBy = null;
         }
 
-        if(modifiedBy.trim().equalsIgnoreCase("")){
+        if(modifiedBy != null && modifiedBy.trim().equalsIgnoreCase("")){
             modifiedBy = null;
         }
 

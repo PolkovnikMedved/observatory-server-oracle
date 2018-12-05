@@ -13,7 +13,7 @@ import java.util.Set;
  * Description: TODO
  */
 @Entity
-@Table(name = "OBS_STRUCTURE2")
+@Table(name = "OBS_STRUCTURE")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
 public class Structure {
 

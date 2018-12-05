@@ -14,7 +14,7 @@ import javax.persistence.*;
  * Description: TODO
  */
 @Entity
-@Table(name = "OBS_STRUCTURE_ELEMENT2")
+@Table(name = "OBS_STRUCTURE_ELEMENT")
 @SequenceGenerator(name = "structure_element_seq", sequenceName = "structure_element_seq", allocationSize = 1)
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class StructureElement {

@@ -13,7 +13,7 @@ import java.io.Serializable;
  * Description: TODO
  */
 @Entity
-@Table(name = "OBS_VERSION2")
+@Table(name = "OBS_VERSION")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
 public class Version implements Serializable {
     @Id
