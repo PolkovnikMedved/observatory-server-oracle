@@ -15,7 +15,7 @@ public class DocumentCategory {
 
     @Id
     @Column(name = "NO_CATEGORIE")
-    private int number;
+    private Integer number;
 
     @Embedded
     private Label label;
@@ -27,7 +27,7 @@ public class DocumentCategory {
         this.label = label;
     }
 
-    public int getNumber() {
+    public Integer getNumber() {
         return number;
     }
 

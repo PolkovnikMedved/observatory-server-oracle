@@ -4,6 +4,7 @@ import be.solodoukhin.domain.embeddable.PersistenceSignature;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Author: Solodoukhin Viktor
@@ -11,14 +12,17 @@ import javax.persistence.*;
  * Description: TODO
  */
 @Entity
-@Table(name = "OBS_VERSION")
-public class Version {
+@Table(name = "OBS_VERSION2")
+public class Version implements Serializable {
     @Id
     @Column(name = "NO_VERSION")
     private String name;
 
     @Column(name = "NO_DFA")
     private String dfaName;
+
+    @Column(name = "DESCRIPTION")
+    private String description;
 
     @Column(name = "NO_DOCUMENT")
     private int document;
@@ -47,6 +51,14 @@ public class Version {
 
     public void setDfaName(String dfaName) {
         this.dfaName = dfaName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getDocument() {

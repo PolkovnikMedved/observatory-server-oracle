@@ -4,6 +4,7 @@ import be.solodoukhin.domain.embeddable.Label;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -13,11 +14,11 @@ import java.util.List;
  */
 @Entity
 @Table(name = "DOCUMENT")
-public class Document {
+public class Document implements Serializable {
 
     @Id
     @Column(name = "NO_DOCUMENT")
-    private int number;
+    private Integer number;
 
     @Embedded
     private Label label;
@@ -35,7 +36,7 @@ public class Document {
 
     public Document() {}
 
-    public int getNumber() {
+    public Integer getNumber() {
         return number;
     }
 

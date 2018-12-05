@@ -11,7 +11,7 @@ import javax.persistence.*;
  * Description: TODO
  */
 @Entity
-@Table(name = "OBS_STRUCTURE_ELEMENT")
+@Table(name = "OBS_STRUCTURE_ELEMENT2")
 @SequenceGenerator(name = "structure_element_seq", sequenceName = "structure_element_seq", allocationSize = 1)
 public class StructureElement {
 

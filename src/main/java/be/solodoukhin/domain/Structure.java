@@ -14,7 +14,7 @@ import java.util.Set;
  * Description: TODO
  */
 @Entity
-@Table(name = "OBS_STRUCTURE")
+@Table(name = "OBS_STRUCTURE2")
 public class Structure {
 
     @Id
