@@ -13,8 +13,7 @@ import java.util.Set;
  * Description: TODO
  */
 @Entity
-@Table(name = "OBS_STRUCTURE")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
+@Table(name = "OBS_STRUCTURE2")
 public class Structure {
 
     @Id
@@ -31,9 +30,11 @@ public class Structure {
     @OneToMany(mappedBy = "structure")
     private Set<Version> versions;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "parentStructure")
     private List<StructureElement> children;
 
+    @JsonBackReference
     @OneToMany(mappedBy = "typeStructure")
     private List<StructureElement> slaves;
 
@@ -104,7 +105,6 @@ public class Structure {
                 "name='" + name + '\'' +
                 ", tag='" + tag + '\'' +
                 ", description='" + description + '\'' +
-                ", versions=" + versions +
                 ", children=" + children +
                 ", signature=" + signature +
                 '}';

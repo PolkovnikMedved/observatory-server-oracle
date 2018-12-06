@@ -1,7 +1,9 @@
 package be.solodoukhin.domain;
 
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
@@ -13,8 +15,7 @@ import java.io.Serializable;
  * Description: TODO
  */
 @Entity
-@Table(name = "OBS_VERSION")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "name")
+@Table(name = "OBS_VERSION2")
 public class Version implements Serializable {
     @Id
     @Column(name = "NO_VERSION")
@@ -26,10 +27,12 @@ public class Version implements Serializable {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "NO_DOCUMENT")
     private Document document;
 
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "NOM_STRUCTURE")
     private Structure structure;

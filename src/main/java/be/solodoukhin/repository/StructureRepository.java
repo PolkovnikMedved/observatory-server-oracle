@@ -1,6 +1,7 @@
 package be.solodoukhin.repository;
 
 import be.solodoukhin.domain.Structure;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,4 +11,4 @@ import org.springframework.stereotype.Repository;
  * Description: TODO
  */
 @Repository
-public interface StructureRepository extends CrudRepository<Structure, String> {}
+public interface StructureRepository extends JpaRepository<Structure, String> {}

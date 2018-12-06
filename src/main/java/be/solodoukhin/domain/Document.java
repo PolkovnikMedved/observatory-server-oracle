@@ -17,7 +17,6 @@ import java.util.List;
  */
 @Entity
 @Table(name = "DOCUMENT")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "number")
 public class Document implements Serializable {
 
     @Id
@@ -27,9 +26,11 @@ public class Document implements Serializable {
     @Embedded
     private Label label;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "document")
     private List<Version> versions;
 
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "NO_CATEGORIE")
     private DocumentCategory category;

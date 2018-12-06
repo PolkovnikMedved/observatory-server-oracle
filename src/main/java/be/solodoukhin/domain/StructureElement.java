@@ -1,9 +1,7 @@
 package be.solodoukhin.domain;
 
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -14,9 +12,8 @@ import javax.persistence.*;
  * Description: TODO
  */
 @Entity
-@Table(name = "OBS_STRUCTURE_ELEMENT")
+@Table(name = "OBS_STRUCTURE_ELEMENT2")
 @SequenceGenerator(name = "structure_element_seq", sequenceName = "structure_element_seq", allocationSize = 1)
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class StructureElement {
 
     @Id
@@ -43,9 +40,10 @@ public class StructureElement {
 
     @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "NOM_STRUCTURE_PARENT")
-    @JsonIgnore
+    @JsonBackReference
     private Structure parentStructure;
 
+    @JsonManagedReference
     @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "NOM_STRUCTURE_TYPE")
     private Structure typeStructure;
@@ -136,7 +134,6 @@ public class StructureElement {
                 ", sequence=" + sequence +
                 ", optional=" + optional +
                 ", repetitive=" + repetitive +
-                ", parentStructure=" + parentStructure +
                 ", typeStructure=" + typeStructure +
                 ", signature=" + signature +
                 '}';
