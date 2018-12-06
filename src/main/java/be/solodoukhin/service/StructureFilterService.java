@@ -57,8 +57,9 @@ public class StructureFilterService {
         structure.getSignature().setCreatedBy(createdBy);
         structure.getSignature().setModifiedBy(modifiedBy);
 
-        // we will search with a `like '%:value%'` for tag, description, createdBy and modifiedBy
+        // we will search with a `like '%:value%'` for name, tag, description, createdBy and modifiedBy
         ExampleMatcher matcher = ExampleMatcher.matching()
+                .withMatcher("name", ExampleMatcher.GenericPropertyMatcher.of(ExampleMatcher.StringMatcher.CONTAINING).ignoreCase())
                 .withMatcher("tag", ExampleMatcher.GenericPropertyMatcher.of(ExampleMatcher.StringMatcher.CONTAINING).ignoreCase())
                 .withMatcher("description", ExampleMatcher.GenericPropertyMatcher.of(ExampleMatcher.StringMatcher.CONTAINING).ignoreCase())
                 .withMatcher("signature.modifiedBy",  ExampleMatcher.GenericPropertyMatcher.of(ExampleMatcher.StringMatcher.CONTAINING).ignoreCase())
