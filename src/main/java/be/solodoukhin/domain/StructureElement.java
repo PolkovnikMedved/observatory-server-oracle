@@ -43,7 +43,7 @@ public class StructureElement {
     @JsonBackReference
     private Structure parentStructure;
 
-    @JsonManagedReference
+    //@JsonManagedReference
     @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "NOM_STRUCTURE_TYPE")
     private Structure typeStructure;

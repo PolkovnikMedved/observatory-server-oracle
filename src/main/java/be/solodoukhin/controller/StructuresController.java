@@ -1,6 +1,7 @@
 package be.solodoukhin.controller;
 
 import be.solodoukhin.domain.Structure;
+import be.solodoukhin.domain.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.StructureRepository;
 import be.solodoukhin.service.StructureFilterService;
 import org.slf4j.Logger;
@@ -60,6 +61,7 @@ public class StructuresController {
     @GetMapping("/{name}")
     public ResponseEntity<Structure> getOne(@PathVariable("name") String name)
     {
+        LOGGER.info("Call to StructuresController.getOne with name = " + name);
         Optional<Structure> found = this.structureRepository.findById(name);
         if(found.isPresent()){
             return ResponseEntity.ok(found.get());
@@ -68,5 +70,15 @@ public class StructuresController {
         {
             return ResponseEntity.badRequest().body(null);
         }
+    }
+
+    @PostMapping("/add")
+    public Structure add(@RequestBody Structure s)
+    {
+        LOGGER.info("Call to StructuresController.save with structure name  = " + s.getName());
+        LOGGER.info("Call to StructuresController.save with structure tag   = " + s.getTag());
+        LOGGER.info("Call to StructuresController.save with structure descr = " + s.getDescription());
+        s.setSignature(new PersistenceSignature("SOLODOUV"));
+        return this.structureRepository.save(s);
     }
 }

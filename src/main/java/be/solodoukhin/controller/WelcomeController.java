@@ -15,12 +15,6 @@ public class WelcomeController {
 
     private ProjectIdentifier projectIdentifier;
 
-    /*@Value("${project.version}")
-    private String projectVersion;
-
-    @Value("${project.name}")
-    private String projectName;*/
-
     public WelcomeController(@Value("${project.version}") String projectVersion, @Value("${project.name}") String projectName) {
         this.projectIdentifier = new ProjectIdentifier(projectName, projectVersion);
     }
