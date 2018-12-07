@@ -3,6 +3,7 @@ package be.solodoukhin.controller;
 import be.solodoukhin.domain.Structure;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.StructureRepository;
+import be.solodoukhin.service.CopyService;
 import be.solodoukhin.service.StructureFilterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +27,13 @@ public class StructuresController {
     private static final Logger LOGGER = LoggerFactory.getLogger(StructuresController.class);
     private final StructureRepository structureRepository;
     private final StructureFilterService structureFilterService;
+    private final CopyService copyService;
 
     @Autowired
-    public StructuresController(StructureRepository structureRepository, StructureFilterService structureFilterService) {
+    public StructuresController(StructureRepository structureRepository, StructureFilterService structureFilterService, CopyService copyService) {
         this.structureRepository = structureRepository;
         this.structureFilterService = structureFilterService;
+        this.copyService = copyService;
     }
 
     @GetMapping("/all")
@@ -80,5 +83,38 @@ public class StructuresController {
         LOGGER.info("Call to StructuresController.save with structure descr = " + s.getDescription());
         s.setSignature(new PersistenceSignature("SOLODOUV"));
         return this.structureRepository.save(s);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Structure> update(@RequestBody Structure s)
+    {
+        LOGGER.info("Call to StructureController.update with name = " + s.getName());
+        Optional<Structure> found = this.structureRepository.findById(s.getName());
+        if(found.isPresent()){
+            found.get().setTag(s.getTag());
+            found.get().setDescription(s.getDescription());
+            found.get().getSignature().setModifiedBy("SOLODOUV");
+            return ResponseEntity.ok(this.structureRepository.save(found.get()));
+        }
+        else
+        {
+            return ResponseEntity.badRequest().body(s);
+        }
+    }
+
+    @GetMapping("/copy")
+    public ResponseEntity<Structure> copyStructure(@RequestParam("from") String from, @RequestParam("to") String to)
+    {
+        LOGGER.info("Call to StructuresController.copy from = '" + from + "', to = '" + to + "'");
+        Optional<Structure> fromStructure = this.structureRepository.findById(from);
+        if(fromStructure.isPresent() && to != null && !to.equalsIgnoreCase("")) {
+            Structure newStructure = this.copyService.createCopyStructure(fromStructure.get(), to);
+            newStructure.setSignature(new PersistenceSignature("SOLODOUV"));
+            return ResponseEntity.ok(this.structureRepository.save(newStructure));
+        }
+        else
+        {
+            return ResponseEntity.badRequest().body(null);
+        }
     }
 }

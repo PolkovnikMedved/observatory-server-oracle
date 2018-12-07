@@ -1,5 +1,6 @@
 package be.solodoukhin.service;
 
+import be.solodoukhin.domain.Structure;
 import be.solodoukhin.domain.Version;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +22,17 @@ public class CopyService {
         copy.setDocument(base.getDocument());
         copy.setStructure(base.getStructure());
         return copy;
+    }
+
+    public Structure createCopyStructure(Structure base, String newStructureName)
+    {
+        Structure structure = new Structure();
+        structure.setName(newStructureName);
+        structure.setDescription(base.getDescription());
+        structure.setTag(base.getTag());
+        structure.setVersions(base.getVersions());
+        structure.setChildren(base.getChildren());
+        structure.setSlaves(base.getSlaves());
+        return structure;
     }
 }

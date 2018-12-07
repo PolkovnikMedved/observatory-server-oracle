@@ -65,6 +65,7 @@ public class VersionController {
     @GetMapping("/copy")
     public ResponseEntity<Version> copyVersion(@RequestParam("from") String from, @RequestParam("to") String to)
     {
+        LOGGER.info("Call to VersionController.copyVersion from = '" + from + "', to = '" + to + "'");
         Optional<Version> fromVersion = this.versionRepository.findById(from);
         if(fromVersion.isPresent() && to != null && !to.equalsIgnoreCase("")){
             Version newVersion = this.copyService.createCopyVersion(fromVersion.get(), to);
