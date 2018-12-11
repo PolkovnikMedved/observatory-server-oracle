@@ -38,11 +38,7 @@ public class StructureElement {
     @Type(type = "true_false")
     private boolean repetitive;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST})
-    @JoinColumn(name = "NOM_STRUCTURE_PARENT")
-    private Structure parentStructure;
-
-    @ManyToOne(cascade = {CascadeType.PERSIST})
+    @ManyToOne
     @JoinColumn(name = "NOM_STRUCTURE_TYPE")
     private Structure typeStructure;
 
@@ -97,14 +93,6 @@ public class StructureElement {
 
     public void setRepetitive(boolean repetitive) {
         this.repetitive = repetitive;
-    }
-
-    public Structure getParentStructure() {
-        return parentStructure;
-    }
-
-    public void setParentStructure(Structure parentStructure) {
-        this.parentStructure = parentStructure;
     }
 
     public Structure getTypeStructure() {

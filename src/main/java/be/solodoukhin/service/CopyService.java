@@ -19,8 +19,7 @@ public class CopyService {
         copy.setName(newVersionName);
         copy.setDescription(base.getDescription());
         copy.setDfaName(base.getDfaName());
-/*        copy.setDocument(base.getDocument());
-        copy.setStructure(base.getStructure());*/
+        copy.setStructure(base.getStructure());
         return copy;
     }
 
@@ -30,9 +29,7 @@ public class CopyService {
         structure.setName(newStructureName);
         structure.setDescription(base.getDescription());
         structure.setTag(base.getTag());
-/*        structure.setVersions(base.getVersions());*/
-        structure.setChildren(base.getChildren());
-        structure.setSlaves(base.getSlaves());
+        structure.setElements(base.getElements());
         return structure;
     }
 }

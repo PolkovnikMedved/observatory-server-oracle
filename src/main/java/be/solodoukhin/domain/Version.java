@@ -1,10 +1,6 @@
 package be.solodoukhin.domain;
 
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -27,9 +23,9 @@ public class Version implements Serializable {
     @Column(name = "DESCRIPTION")
     private String description;
 
-/*    @ManyToOne
+    @ManyToOne
     @JoinColumn(name = "NOM_STRUCTURE")
-    private Structure structure;*/
+    private Structure structure;
 
     @Embedded
     private PersistenceSignature signature;
@@ -60,21 +56,13 @@ public class Version implements Serializable {
         this.description = description;
     }
 
-    /*    public Document getDocument() {
-            return document;
-        }
-
-        public void setDocument(Document document) {
-            this.document = document;
-        }*/
-
-/*    public Structure getStructure() {
+    public Structure getStructure() {
         return structure;
     }
 
     public void setStructure(Structure structure) {
         this.structure = structure;
-    }*/
+    }
 
     public PersistenceSignature getSignature() {
         return signature;
@@ -89,8 +77,7 @@ public class Version implements Serializable {
         return "Version{" +
                 "name='" + name + '\'' +
                 ", dfaName='" + dfaName + '\'' +
-/*                ", document=" + document +*/
-/*                ", structure=" + structure +*/
+                ", structure=" + structure +
                 ", signature=" + signature +
                 '}';
     }

@@ -1,6 +1,7 @@
 package be.solodoukhin.controller;
 
 import be.solodoukhin.domain.Structure;
+import be.solodoukhin.domain.api.ErrorResponse;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.StructureRepository;
 import be.solodoukhin.service.CopyService;
@@ -103,7 +104,7 @@ public class StructuresController {
     }
 
     @GetMapping("/copy")
-    public ResponseEntity<Structure> copyStructure(@RequestParam("from") String from, @RequestParam("to") String to)
+    public ResponseEntity<?> copyStructure(@RequestParam("from") String from, @RequestParam("to") String to)
     {
         LOGGER.info("Call to StructuresController.copy from = '" + from + "', to = '" + to + "'");
         Optional<Structure> fromStructure = this.structureRepository.findById(from);
@@ -114,7 +115,7 @@ public class StructuresController {
         }
         else
         {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().body(new ErrorResponse(400, "Could not find structure " + from + " or new structure name is invalid."));
         }
     }
 }

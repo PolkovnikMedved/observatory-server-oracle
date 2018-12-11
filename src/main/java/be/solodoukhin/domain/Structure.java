@@ -1,11 +1,10 @@
 package be.solodoukhin.domain;
 
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
-import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Author: Solodoukhin Viktor
@@ -26,14 +25,10 @@ public class Structure {
     @Column(name = "DESCRIPTION")
     private String description;
 
-/*    @OneToMany(mappedBy = "structure")
-    private Set<Version> versions;*/
-
-    @OneToMany(mappedBy = "parentStructure")
-    private List<StructureElement> children;
-
-    @OneToMany(mappedBy = "typeStructure")
-    private List<StructureElement> slaves;
+    @OrderBy("sequence ASC")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "NOM_STRUCTURE_PARENT")
+    private List<StructureElement> elements;
 
     @Embedded
     private PersistenceSignature signature;
@@ -64,28 +59,15 @@ public class Structure {
         this.description = description;
     }
 
-/*    public Set<Version> getVersions() {
-        return versions;
+    public List<StructureElement> getElements() {
+        if(this.elements == null){
+            this.elements = new ArrayList<>();
+        }
+        return elements;
     }
 
-    public void setVersions(Set<Version> versions) {
-        this.versions = versions;
-    }*/
-
-    public List<StructureElement> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<StructureElement> children) {
-        this.children = children;
-    }
-
-    public List<StructureElement> getSlaves() {
-        return slaves;
-    }
-
-    public void setSlaves(List<StructureElement> slaves) {
-        this.slaves = slaves;
+    public void setElements(List<StructureElement> elements) {
+        this.elements = elements;
     }
 
     public PersistenceSignature getSignature() {
@@ -102,7 +84,7 @@ public class Structure {
                 "name='" + name + '\'' +
                 ", tag='" + tag + '\'' +
                 ", description='" + description + '\'' +
-                ", children=" + children +
+                ", elements=" + elements +
                 ", signature=" + signature +
                 '}';
     }
