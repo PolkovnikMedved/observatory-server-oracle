@@ -2,12 +2,14 @@ package be.solodoukhin.domain;
 
 import be.solodoukhin.domain.embeddable.Label;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,11 +28,11 @@ public class Document implements Serializable {
     @Embedded
     private Label label;
 
-    @JsonManagedReference
-    @OneToMany(mappedBy = "document")
+    @OrderBy("name ASC")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "NO_DOCUMENT")
     private List<Version> versions;
 
-    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "NO_CATEGORIE")
     private DocumentCategory category;
@@ -57,7 +59,17 @@ public class Document implements Serializable {
     }
 
     public List<Version> getVersions() {
+        if(this.versions == null){
+            this.versions = new ArrayList<>();
+        }
         return versions;
+    }
+
+    public void addVersion(Version version) {
+        if(this.versions == null){
+            this.versions = new ArrayList<>();
+        }
+        this.versions.add(version);
     }
 
     public void setVersions(List<Version> versions) {

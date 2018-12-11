@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 /**
  * Author: Solodoukhin Viktor
  * Date: 28.11.18
@@ -34,4 +36,7 @@ public interface DocumentRepository extends JpaRepository<Document, Integer> {
 
     @Query("select d from Document d inner join d.category")
     Page<Document> getAllWithCategory(Pageable pageable);
+
+    @Query("select distinct d from Document d inner join d.versions v where v.name = :versionName")
+    Optional<Document> findByVersion(@Param("versionName") String versionName);
 }

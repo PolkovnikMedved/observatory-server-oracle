@@ -1,7 +1,10 @@
 package be.solodoukhin.controller;
 
+import be.solodoukhin.domain.Document;
 import be.solodoukhin.domain.Version;
+import be.solodoukhin.domain.api.ErrorResponse;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import be.solodoukhin.repository.DocumentRepository;
 import be.solodoukhin.repository.VersionRepository;
 import be.solodoukhin.service.CopyService;
 import org.slf4j.Logger;
@@ -22,11 +25,13 @@ import java.util.Optional;
 public class VersionController {
     private static final Logger LOGGER = LoggerFactory.getLogger(VersionController.class);
     private final VersionRepository versionRepository;
+    private final DocumentRepository documentRepository;
     private final CopyService copyService;
 
     @Autowired
-    public VersionController(VersionRepository versionRepository, CopyService copyService) {
+    public VersionController(VersionRepository versionRepository, DocumentRepository documentRepository, CopyService copyService) {
         this.versionRepository = versionRepository;
+        this.documentRepository = documentRepository;
         this.copyService = copyService;
     }
 
@@ -48,8 +53,8 @@ public class VersionController {
     public ResponseEntity<Version> update(@RequestBody Version version)
     {
         LOGGER.info("Call to VersionController.update with version id = " + version.getName());
-        Optional<Version> v = this.versionRepository.findById(version.getName());
 
+        Optional<Version> v = this.versionRepository.findById(version.getName());
         if(v.isPresent()){
             v.get().setDfaName(version.getDfaName());
             v.get().setDescription(version.getDescription());
@@ -63,18 +68,35 @@ public class VersionController {
     }
 
     @GetMapping("/copy")
-    public ResponseEntity<Version> copyVersion(@RequestParam("from") String from, @RequestParam("to") String to)
+    public ResponseEntity<?> copyVersion(@RequestParam("from") String from, @RequestParam("to") String to)
     {
         LOGGER.info("Call to VersionController.copyVersion from = '" + from + "', to = '" + to + "'");
-        Optional<Version> fromVersion = this.versionRepository.findById(from);
-        if(fromVersion.isPresent() && to != null && !to.equalsIgnoreCase("")){
-            Version newVersion = this.copyService.createCopyVersion(fromVersion.get(), to);
-            newVersion.setSignature(new PersistenceSignature("SOLODOUV"));
-            return ResponseEntity.ok(this.versionRepository.save(newVersion));
+        // Get the document that contains the version
+        Optional<Document> document = this.documentRepository.findByVersion(from);
+
+        if(document.isPresent()) {
+            // Get the version from document list
+            Optional<Version> fromVersion = document.get().getVersions().stream().filter(version1 -> from.equals(version1.getName())).findAny();
+
+            if(fromVersion.isPresent()){
+                // Copy and save
+                Version toVersion = this.copyService.createCopyVersion(fromVersion.get(), to);
+                toVersion.setSignature(new PersistenceSignature("SOLODOUV"));
+                toVersion.getSignature().setModification("SOLODOUV");
+                document.get().addVersion(toVersion);
+
+                return ResponseEntity.ok(this.documentRepository.save(document.get()));
+            }
+            else
+            {
+                LOGGER.warn("Could not find version " + from);
+                return ResponseEntity.badRequest().body(new ErrorResponse(400, "Could not find version"));
+            }
         }
         else
         {
-            return ResponseEntity.badRequest().body(null);
+            LOGGER.warn("Could not find document for version " + from);
+            return ResponseEntity.badRequest().body(new ErrorResponse(400, "Could not find version document"));
         }
     }
 }

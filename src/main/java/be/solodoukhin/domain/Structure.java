@@ -26,15 +26,12 @@ public class Structure {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "structure")
-    private Set<Version> versions;
+/*    @OneToMany(mappedBy = "structure")
+    private Set<Version> versions;*/
 
-    @JsonManagedReference
     @OneToMany(mappedBy = "parentStructure")
     private List<StructureElement> children;
 
-    @JsonBackReference
     @OneToMany(mappedBy = "typeStructure")
     private List<StructureElement> slaves;
 
@@ -67,13 +64,13 @@ public class Structure {
         this.description = description;
     }
 
-    public Set<Version> getVersions() {
+/*    public Set<Version> getVersions() {
         return versions;
     }
 
     public void setVersions(Set<Version> versions) {
         this.versions = versions;
-    }
+    }*/
 
     public List<StructureElement> getChildren() {
         return children;
