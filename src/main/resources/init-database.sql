@@ -51,8 +51,8 @@ create table obs_structure_element(
     TAG varchar(80),
     DESCRIPTION varchar(767) not null,
     SUITE numeric(5, 0) default 0,
-    OPTIONNEL char(1) default 'f',
-    REPETITIF char(1) default 'f',
+    OPTIONNEL char(1) default 'F',
+    REPETITIF char(1) default 'F',
     NOM_STRUCTURE_PARENT varchar(80),
     NOM_STRUCTURE_TYPE varchar(80),
     AUTEUR_CREATION varchar(30) not null,
@@ -119,12 +119,12 @@ CREATE OR REPLACE TRIGGER VALID_STR_EL_OPT_REP
 BEFORE INSERT OR UPDATE ON OBS_STRUCTURE_ELEMENT
                    FOR EACH ROW
 BEGIN
-IF :NEW.OPTIONNEL <> 't' AND :NEW.OPTIONNEL <> 'f' THEN
-raise_application_error(-20002, 'Optionnel field must be ''t'' or ''f'' ');
+IF :NEW.OPTIONNEL <> 'T' AND :NEW.OPTIONNEL <> 'F' THEN
+raise_application_error(-20002, 'Optionnel field must be ''T'' or ''F'', actual: ' || :NEW.OPTIONNEL);
 END IF;
 
-IF :NEW.REPETITIF <> 't' AND :NEW.REPETITIF <> 'f' THEN
-raise_application_error(-20002, 'Repetitif field must be ''t'' or ''f'' ');
+IF :NEW.REPETITIF <> 'T' AND :NEW.REPETITIF <> 'F' THEN
+raise_application_error(-20002, 'Repetitif field must be ''T'' or ''F'', actual: ' || :NEW.REPETITIF);
 END IF;
 
 IF :NEW.SUITE < 0 THEN

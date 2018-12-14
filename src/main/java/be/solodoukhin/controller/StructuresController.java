@@ -5,6 +5,7 @@ import be.solodoukhin.domain.api.ErrorResponse;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.StructureRepository;
 import be.solodoukhin.service.CopyService;
+import be.solodoukhin.service.ReorderElementsService;
 import be.solodoukhin.service.StructureFilterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,12 +30,14 @@ public class StructuresController {
     private final StructureRepository structureRepository;
     private final StructureFilterService structureFilterService;
     private final CopyService copyService;
+    private final ReorderElementsService reorderElementsService;
 
     @Autowired
-    public StructuresController(StructureRepository structureRepository, StructureFilterService structureFilterService, CopyService copyService) {
+    public StructuresController(StructureRepository structureRepository, StructureFilterService structureFilterService, CopyService copyService, ReorderElementsService reorderElementsService) {
         this.structureRepository = structureRepository;
         this.structureFilterService = structureFilterService;
         this.copyService = copyService;
+        this.reorderElementsService = reorderElementsService;
     }
 
     @GetMapping("/all")
@@ -83,6 +86,14 @@ public class StructuresController {
         LOGGER.info("Call to StructuresController.save with structure tag   = " + s.getTag());
         LOGGER.info("Call to StructuresController.save with structure descr = " + s.getDescription());
         s.setSignature(new PersistenceSignature("SOLODOUV"));
+        return this.structureRepository.save(s);
+    }
+
+    @PutMapping("update-order")
+    public Structure changeOrder(@RequestBody Structure s)
+    {
+        LOGGER.info("Call to StructureController.changeOrder with name = " + s.getName());
+        this.reorderElementsService.reorder(s);
         return this.structureRepository.save(s);
     }
 
