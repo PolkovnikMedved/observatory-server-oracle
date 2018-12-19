@@ -7,19 +7,15 @@ import javax.persistence.AttributeConverter;
  * Date: 28.11.18
  * Description: TODO
  */
-public class CharToBooleanConverter implements AttributeConverter<String, Boolean> {
+public class CharToBooleanConverter implements AttributeConverter<Boolean, String> {
+
     @Override
-    public Boolean convertToDatabaseColumn(String s) {
-        return s.equalsIgnoreCase("t");
+    public String convertToDatabaseColumn(Boolean attribute) {
+        return (attribute != null && attribute) ? "t" : "f";
     }
 
     @Override
-    public String convertToEntityAttribute(Boolean aBoolean) {
-
-        if(aBoolean.equals(true)){
-            return "t";
-        } else {
-            return "f";
-        }
+    public Boolean convertToEntityAttribute(String dbData) {
+        return dbData != null && dbData.equalsIgnoreCase("t");
     }
 }

@@ -94,6 +94,7 @@ public class StructuresController {
     {
         LOGGER.info("Call to StructureController.changeOrder with name = " + s.getName());
         this.reorderElementsService.reorder(s);
+        s.getElements().forEach(el -> el.getSignature().setModification("SOLODOUV"));
         return this.structureRepository.save(s);
     }
 
