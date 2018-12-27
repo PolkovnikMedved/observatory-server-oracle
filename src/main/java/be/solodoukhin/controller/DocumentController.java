@@ -1,12 +1,18 @@
 package be.solodoukhin.controller;
 
 import be.solodoukhin.domain.Document;
+import be.solodoukhin.domain.Version;
+import be.solodoukhin.domain.api.ErrorResponse;
+import be.solodoukhin.domain.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.DocumentRepository;
 import be.solodoukhin.service.DocumentFilterService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 /**
  * Author: Solodoukhin Viktor
@@ -56,5 +62,58 @@ public class DocumentController {
     {
         LOGGER.info("Call to DocumentController.getOne with id = " + id);
         return this.documentRepository.getOne(id);
+    }
+
+    //TODO remove create version + refactoring + remove verson if not exists
+    @PutMapping("/update")
+    public ResponseEntity<?> update(@RequestBody Document document) {
+        LOGGER.info("Call to DocumentController.update with id = " + document.getNumber());
+
+        Optional<Document> originalDocument = this.documentRepository.findById(document.getNumber());
+        if(!originalDocument.isPresent()) {
+            return ResponseEntity.badRequest().body(new ErrorResponse(400, "Could not find document with id = " + document.getNumber()));
+        }
+
+        for (Version v : document.getVersions()) {
+            if(v.getName() != null) {
+                boolean found = false;
+                for(Version originalVersion: originalDocument.get().getVersions()) {
+                    if(v.getName().equalsIgnoreCase(originalVersion.getName())) {// Version already exists. Update ?
+                        found = true;
+
+                        if(!v.getDfaName().equalsIgnoreCase(originalVersion.getDfaName())) {
+                            LOGGER.info("Update dfa for version : " + originalVersion.getName());
+                            originalVersion.setDfaName(v.getDfaName());
+                            originalVersion.getSignature().setModification("SOLODOUV");
+                        }
+
+                        if(!v.getDescription().equalsIgnoreCase(originalVersion.getDescription())) {
+                            LOGGER.info("Update description for version: " + originalVersion.getName());
+                            originalVersion.setDescription(v.getDescription());
+                            originalVersion.getSignature().setModification("SOLODOUV");
+                        }
+
+                        break;
+                    }
+                }
+                if(!found) { // This is a new version
+                    v.setSignature(new PersistenceSignature("SOLODOUV"));
+                    v.getSignature().setModification("SOLODOUV");
+                    originalDocument.get().addVersion(v);
+                }
+            }
+            else{
+                return ResponseEntity.badRequest().body(new ErrorResponse(400, "One version is invalid. Version name is null."));
+            }
+        }
+
+        try{
+            this.documentRepository.save(originalDocument.get());
+        } catch (Exception e){
+            LOGGER.error("An error occurred", e);
+            return ResponseEntity.badRequest().body(new ErrorResponse(400, e.getMessage()));
+        }
+
+        return ResponseEntity.ok().build();
     }
 }

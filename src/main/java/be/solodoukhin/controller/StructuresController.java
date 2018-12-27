@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -38,6 +39,13 @@ public class StructuresController {
         this.structureFilterService = structureFilterService;
         this.copyService = copyService;
         this.reorderElementsService = reorderElementsService;
+    }
+
+    @GetMapping("/all-names")
+    public List<String> getAllNames()
+    {
+        LOGGER.info("Call to StructuresController.getAllNames");
+        return this.structureRepository.getAllStructureNames();
     }
 
     @GetMapping("/all")
