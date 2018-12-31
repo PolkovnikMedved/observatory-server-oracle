@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -64,7 +67,7 @@ public class DocumentController {
         return this.documentRepository.getOne(id);
     }
 
-    //TODO remove create version + refactoring + remove verson if not exists
+    // Warning update document CAN NOT update DOCUMENT TABLE. It's used to do cascade operations on version.
     @PutMapping("/update")
     public ResponseEntity<?> update(@RequestBody Document document) {
         LOGGER.info("Call to DocumentController.update with id = " + document.getNumber());
@@ -74,37 +77,53 @@ public class DocumentController {
             return ResponseEntity.badRequest().body(new ErrorResponse(400, "Could not find document with id = " + document.getNumber()));
         }
 
-        for (Version v : document.getVersions()) {
-            if(v.getName() != null) {
+        // Update versions and remove
+        Iterator<Version> it = originalDocument.get().getVersions().iterator();
+        while(it.hasNext()) {
+            Version originalVersion = it.next();
+            Optional<Version> receivedVersion = document.getVersions().stream().filter(version -> version.getName().equalsIgnoreCase(originalVersion.getName())).findAny();
+
+            if(receivedVersion.isPresent()) { // found version => see if we have to update the orignal one
+
+                if(!originalVersion.getDfaName().equalsIgnoreCase(receivedVersion.get().getDfaName())) {
+                    LOGGER.info("Update DFA for version " + originalVersion.getName());
+                    originalVersion.setDfaName(receivedVersion.get().getDfaName());
+                    originalVersion.getSignature().setModification("SOLODOUV");
+                }
+
+                if(!receivedVersion.get().getDescription().equalsIgnoreCase(originalVersion.getDescription())) {
+                    LOGGER.info("Update description for version: " + originalVersion.getName());
+                    originalVersion.setDescription(receivedVersion.get().getDescription());
+                    originalVersion.getSignature().setModification("SOLODOUV");
+                }
+
+            } else {
+                it.remove(); // the version doesn't exist in the received object => we remove it from the original one
+            }
+        }
+        // add new versions
+        if(document.getVersions().size() > originalDocument.get().getVersions().size()) {
+            LOGGER.info("Document versions " + document.getVersions().size() + " > original versions " + originalDocument.get().getVersions().size());
+            List<Version> newVersions = new ArrayList<>();
+            for(Version received: document.getVersions()) {
                 boolean found = false;
-                for(Version originalVersion: originalDocument.get().getVersions()) {
-                    if(v.getName().equalsIgnoreCase(originalVersion.getName())) {// Version already exists. Update ?
+                for(Version original : originalDocument.get().getVersions()) {
+                    if(original.getName().equalsIgnoreCase(received.getName())) {
+                        LOGGER.info("Found : " + original.getName());
                         found = true;
-
-                        if(!v.getDfaName().equalsIgnoreCase(originalVersion.getDfaName())) {
-                            LOGGER.info("Update dfa for version : " + originalVersion.getName());
-                            originalVersion.setDfaName(v.getDfaName());
-                            originalVersion.getSignature().setModification("SOLODOUV");
-                        }
-
-                        if(!v.getDescription().equalsIgnoreCase(originalVersion.getDescription())) {
-                            LOGGER.info("Update description for version: " + originalVersion.getName());
-                            originalVersion.setDescription(v.getDescription());
-                            originalVersion.getSignature().setModification("SOLODOUV");
-                        }
-
                         break;
                     }
                 }
-                if(!found) { // This is a new version
-                    v.setSignature(new PersistenceSignature("SOLODOUV"));
-                    v.getSignature().setModification("SOLODOUV");
-                    originalDocument.get().addVersion(v);
+                if(!found) {
+                    LOGGER.info("Not found : " + received.getName());
+                    received.setSignature(new PersistenceSignature("SOLODOUV"));
+                    received.getSignature().setModification("SOLODOUV");
+                    newVersions.add(received);
                 }
             }
-            else{
-                return ResponseEntity.badRequest().body(new ErrorResponse(400, "One version is invalid. Version name is null."));
-            }
+            LOGGER.info("New versions size = " + newVersions.size());
+            originalDocument.get().getVersions().addAll(newVersions);
+            LOGGER.info("New versions size = " + originalDocument.get().getVersions().size());
         }
 
         try{
