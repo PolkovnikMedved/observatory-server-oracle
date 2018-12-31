@@ -12,8 +12,4 @@ import org.springframework.stereotype.Repository;
  * Description: TODO
  */
 @Repository
-public interface VersionRepository extends CrudRepository<Version, String> {
-
-    @Query("SELECT case when (count(d) > 1) then true else false end from Document d inner join d.versions v where v.name = :version")
-    boolean usedVersion(@Param("version") String version);
-}
+public interface VersionRepository extends CrudRepository<Version, String> {}

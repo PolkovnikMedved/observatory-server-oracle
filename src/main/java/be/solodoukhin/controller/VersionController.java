@@ -36,12 +36,6 @@ public class VersionController {
         this.copyService = copyService;
     }
 
-    @GetMapping("/used")
-    public boolean used(@PathParam("name") String name) {
-        LOGGER.info("Call to VersionController.used with name = " + name);
-        return this.versionRepository.usedVersion(name);
-    }
-
     // Not used, we use document.update since we cascade all operations for version
     @PostMapping("/add")
     public Version save(@RequestBody Version version){
