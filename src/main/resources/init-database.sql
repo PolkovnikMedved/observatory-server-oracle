@@ -111,7 +111,9 @@ CREATE OR REPLACE TRIGGER trg_no_struct_el
 BEFORE INSERT ON obs_structure_element
 FOR EACH ROW
 BEGIN
-:new.no_element := structure_element_seq.nextval;
+    IF :NEW.NO_ELEMENT IS NULL THEN
+        :new.no_element := structure_element_seq.nextval;
+    END IF;
 END;
 
 -- Validate Optional, Repetitive and suite fields

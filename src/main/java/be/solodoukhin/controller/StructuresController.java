@@ -128,9 +128,10 @@ public class StructuresController {
     {
         LOGGER.info("Call to StructuresController.copy from = '" + from + "', to = '" + to + "'");
         Optional<Structure> fromStructure = this.structureRepository.findById(from);
-        if(fromStructure.isPresent() && to != null && !to.equalsIgnoreCase("")) {
+        if(fromStructure.isPresent() && to != null && !to.trim().equalsIgnoreCase("")) {
             Structure newStructure = this.copyService.createCopyStructure(fromStructure.get(), to);
             newStructure.setSignature(new PersistenceSignature("SOLODOUV"));
+            LOGGER.info("Copy structure = " + newStructure);
             Structure saved;
             try {
                 saved = this.structureRepository.save(newStructure);
