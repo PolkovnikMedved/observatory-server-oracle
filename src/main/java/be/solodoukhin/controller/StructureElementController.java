@@ -37,7 +37,7 @@ public class StructureElementController {
         Optional<StructureElement> element = repository.findById(el.getId());
         if(element.isPresent()) {
 
-            element.get().setTag(el.getTag());
+            element.get().setTag(el.getTag().orElse(null));
             element.get().setDescription(el.getDescription());
             element.get().setOptional(el.isOptional());
             element.get().setRepetitive(el.isRepetitive());

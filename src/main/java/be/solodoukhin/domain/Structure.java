@@ -35,6 +35,19 @@ public class Structure {
 
     public Structure() {}
 
+    public Structure(Structure that) {
+        this.name = that.getName();
+        if(that.getTag() != null) {
+            this.tag = that.getTag();
+        }
+        this.description = that.getDescription();
+        this.elements = new ArrayList<>();
+        for(StructureElement se: that.getElements()) {
+            this.elements.add(new StructureElement(se));
+        }
+        this.signature = that.getSignature();
+    }
+
     public String getName() {
         return name;
     }

@@ -2,9 +2,9 @@ package be.solodoukhin.domain;
 
 import be.solodoukhin.domain.converter.CharToBooleanConverter;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 /**
  * Author: Solodoukhin Viktor
@@ -19,7 +19,7 @@ public class StructureElement {
     @Id
     @Column(name = "NO_ELEMENT")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "structure_element_seq")
-    private long id;
+    private Long id;
 
     @Column(name = "TAG")
     private String tag;
@@ -47,16 +47,31 @@ public class StructureElement {
 
     public StructureElement() {}
 
+    public StructureElement(StructureElement that) {
+        this.id = that.getId();
+        if(that.getTag().isPresent()) {
+            this.tag = that.getTag().get();
+        }
+        this.description = that.getDescription();
+        this.sequence = that.getSequence();
+        this.optional = that.isOptional();
+        this.repetitive = that.isRepetitive();
+        if(that.getTypeStructure() != null) {
+            this.typeStructure = new Structure(that.getTypeStructure());
+        }
+        this.signature = that.getSignature();
+    }
+
     public long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getTag() {
-        return tag;
+    public Optional<String> getTag() {
+        return Optional.ofNullable(tag);
     }
 
     public void setTag(String tag) {

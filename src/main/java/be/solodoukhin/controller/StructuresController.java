@@ -131,7 +131,16 @@ public class StructuresController {
         if(fromStructure.isPresent() && to != null && !to.equalsIgnoreCase("")) {
             Structure newStructure = this.copyService.createCopyStructure(fromStructure.get(), to);
             newStructure.setSignature(new PersistenceSignature("SOLODOUV"));
-            return ResponseEntity.ok(this.structureRepository.save(newStructure));
+            Structure saved;
+            try {
+                saved = this.structureRepository.save(newStructure);
+            }
+            catch (Exception e){
+                LOGGER.error("An error occurred", e);
+                return ResponseEntity.badRequest().body(new ErrorResponse(400, e.getMessage()));
+            }
+
+            return ResponseEntity.ok(saved);
         }
         else
         {

@@ -2,6 +2,7 @@ package be.solodoukhin.service;
 
 import be.solodoukhin.domain.Structure;
 import be.solodoukhin.domain.Version;
+import be.solodoukhin.domain.embeddable.PersistenceSignature;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,7 +13,6 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CopyService {
-
     public Version createCopyVersion(Version base, String newVersionName)
     {
         Version copy = new Version();
@@ -25,11 +25,15 @@ public class CopyService {
 
     public Structure createCopyStructure(Structure base, String newStructureName)
     {
-        Structure structure = new Structure();
+        Structure structure = new Structure(base);
         structure.setName(newStructureName);
-        structure.setDescription(base.getDescription());
-        structure.setTag(base.getTag());
-        structure.setElements(base.getElements());
+        structure.setSignature(new PersistenceSignature("SOLODOUV"));
+        structure.getElements().forEach(el -> {
+            el.setId(null);
+            el.setSignature(new PersistenceSignature("SOLODOUV"));
+            el.getSignature().setModification("SOLODOUV");
+        });
+
         return structure;
     }
 }
