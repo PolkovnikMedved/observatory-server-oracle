@@ -48,6 +48,12 @@ public class StructuresController {
         return this.structureRepository.getAllStructureNames();
     }
 
+    @GetMapping("/is-used")
+    public Boolean isUsed(@RequestParam("name") String name) {
+        LOGGER.info("Call to StructuresController.isUsed with name = " + name);
+        return this.structureRepository.isUsedAsType(name);
+    }
+
     @GetMapping("/all")
     public Page<Structure> getAll(
             @RequestParam(value = "name", required = false) String name,
@@ -147,5 +153,18 @@ public class StructuresController {
         {
             return ResponseEntity.badRequest().body(new ErrorResponse(400, "Could not find structure " + from + " or new structure name is invalid."));
         }
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> delete(@RequestParam("name") String name)
+    {
+        LOGGER.info("Call to StructuresController.delete with name = " + name);
+        try{
+            this.structureRepository.deleteById(name);
+        } catch (Exception e) {
+            LOGGER.error("An error occurred", e);
+            return ResponseEntity.badRequest().body(new ErrorResponse(400, e.getMessage()));
+        }
+        return ResponseEntity.ok().build();
     }
 }
