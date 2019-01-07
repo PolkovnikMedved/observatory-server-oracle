@@ -1,6 +1,7 @@
 package be.solodoukhin.controller;
 
 import be.solodoukhin.domain.Structure;
+import be.solodoukhin.domain.StructureElement;
 import be.solodoukhin.domain.api.ErrorResponse;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.StructureRepository;
@@ -113,7 +114,7 @@ public class StructuresController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Structure> update(@RequestBody Structure s)
+    public ResponseEntity<?> update(@RequestBody Structure s)
     {
         LOGGER.info("Call to StructureController.update with name = " + s.getName());
         Optional<Structure> found = this.structureRepository.findById(s.getName());
@@ -121,7 +122,46 @@ public class StructuresController {
             found.get().setTag(s.getTag());
             found.get().setDescription(s.getDescription());
             found.get().getSignature().setModifiedBy("SOLODOUV");
-            return ResponseEntity.ok(this.structureRepository.save(found.get()));
+
+            LOGGER.info("On va faire " + s.getElements().size() + " boucles.");
+            int cpt = 0;
+            for(StructureElement receivedElement: s.getElements()) {
+                LOGGER.info("Boucle ....");
+                if(receivedElement.getId() != null && receivedElement.getId() != 0L) { // Existing element
+                    for(StructureElement existing: found.get().getElements()) {
+                        if(existing.getId().equals(receivedElement.getId())) { // found in the original object
+                            LOGGER.info("On a trouvé notre bonheur: " + existing.getId());
+                            existing.setSequence(cpt);
+                            existing.getSignature().setModification("SOLODOUV");
+                            break;
+                        }
+                    }
+                }
+                else { // new element
+                    LOGGER.info("C'est un tout nouvel élément: " + receivedElement);
+                    if(receivedElement.getTypeStructure() == null || receivedElement.getTypeStructure().getName() == null || receivedElement.getTypeStructure().getName().trim().equalsIgnoreCase("")){
+                        receivedElement.setTypeStructure(null);
+                    }
+                    receivedElement.setSignature(new PersistenceSignature("SOLODOUV"));
+                    receivedElement.setSequence(cpt);
+                    receivedElement.getSignature().setModification("SOLODOUV");
+                    found.get().getElements().add(receivedElement);
+                }
+
+                cpt++;
+            }
+
+            LOGGER.info("Structure to save : " + found.get());
+
+            Structure saved = null;
+            try{
+                saved = this.structureRepository.save(found.get());
+            } catch (Exception e) {
+                LOGGER.error("An error occurred", e);
+                return ResponseEntity.badRequest().body(new ErrorResponse(400, e.getMessage()));
+            }
+
+            return ResponseEntity.ok(saved);
         }
         else
         {

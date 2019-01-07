@@ -15,7 +15,7 @@ import java.util.List;
  */
 @Repository
 public interface StructureRepository extends JpaRepository<Structure, String> {
-    @Query("SELECT s.name FROM Structure s")
+    @Query("SELECT s.name FROM Structure s ORDER BY s.name")
     List<String> getAllStructureNames();
 
     @Query("SELECT CASE WHEN (COUNT(s) > 0) THEN TRUE ELSE FALSE END FROM Structure s JOIN s.elements e WHERE e.typeStructure.name = :name")

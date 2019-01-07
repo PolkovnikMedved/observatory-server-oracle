@@ -62,7 +62,7 @@ public class StructureElement {
         this.signature = that.getSignature();
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
