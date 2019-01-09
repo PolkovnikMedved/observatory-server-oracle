@@ -79,6 +79,13 @@ public class Structure {
         return elements;
     }
 
+    public void addElement(StructureElement structureElement) {
+        if(this.elements == null){
+            this.elements = new ArrayList<>();
+        }
+        this.elements.add(structureElement);
+    }
+
     public void setElements(List<StructureElement> elements) {
         this.elements = elements;
     }
