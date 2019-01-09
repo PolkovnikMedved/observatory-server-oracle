@@ -46,4 +46,37 @@ public class StructureElementTest extends AbstractConfiguredTest {
         Assert.assertNotNull(structureElement.getTypeStructure());
         Assert.assertNotNull(structureElement.getSignature());
     }
+
+    @Test
+    public void testCopyConstructor() {
+        LOGGER.info("StructureElementTest.testCopyConstructor()");
+        Structure type = new Structure();
+        type.setName("TYPE");
+
+        StructureElement base = new StructureElement();
+        base.setId(525L);
+        base.setTag("0");
+        base.setDescription("0");
+        base.setOptional(false);
+        base.setRepetitive(false);
+        base.setSequence(0);
+        base.setTypeStructure(type);
+        base.setSignature(new PersistenceSignature("SOLODOUV"));
+
+        StructureElement copy = new StructureElement(base);
+        Assert.assertNotNull(copy);
+        Assert.assertEquals(525L, ( long ) copy.getId());
+        Assert.assertTrue(copy.getTag().isPresent());
+        Assert.assertEquals("0", copy.getTag().get());
+        Assert.assertEquals("0", copy.getDescription());
+        Assert.assertFalse(copy.isOptional());
+        Assert.assertFalse(copy.isRepetitive());
+        Assert.assertEquals(0, copy.getSequence());
+
+        Assert.assertNotNull(copy.getTypeStructure());
+        Assert.assertEquals("TYPE", copy.getTypeStructure().getName());
+
+        Assert.assertNotNull(copy.getSignature());
+        Assert.assertEquals("SOLODOUV", copy.getSignature().getCreatedBy());
+    }
 }
