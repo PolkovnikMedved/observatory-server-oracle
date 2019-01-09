@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CopyService {
+
+    //TODO returned copy has no signature but returned structure has signature....
     public Version createCopyVersion(Version base, String newVersionName)
     {
         Version copy = new Version();
