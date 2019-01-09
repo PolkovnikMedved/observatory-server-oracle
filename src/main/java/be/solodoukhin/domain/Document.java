@@ -23,7 +23,7 @@ public class Document implements Serializable {
 
     @Id
     @Column(name = "NO_DOCUMENT")
-    private Integer number;
+    private Integer number; //TODO set int
 
     @Embedded
     private Label label;
