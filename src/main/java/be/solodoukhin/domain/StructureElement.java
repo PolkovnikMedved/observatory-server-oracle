@@ -19,7 +19,7 @@ public class StructureElement {
     @Id
     @Column(name = "NO_ELEMENT")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "structure_element_seq")
-    private Long id;
+    private Long id; // TODO set long
 
     @Column(name = "TAG")
     private String tag;
