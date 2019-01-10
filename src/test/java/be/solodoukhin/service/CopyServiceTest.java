@@ -1,11 +1,10 @@
-package be.groups.service;
+package be.solodoukhin.service;
 
-import be.groups.AbstractConfiguredTest;
+import be.solodoukhin.ApplicationWithoutContextTest;
 import be.solodoukhin.domain.Structure;
 import be.solodoukhin.domain.StructureElement;
 import be.solodoukhin.domain.Version;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
-import be.solodoukhin.service.CopyService;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,7 +16,7 @@ import java.util.ArrayList;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
-public class CopyServiceTest extends AbstractConfiguredTest {
+public class CopyServiceTest extends ApplicationWithoutContextTest {
 
     private static final String VERSION_TEST_NAME = "UNIT_TEST";
     private static final String TEST_STRUCTURE_NAME = "UNIT_TEST";

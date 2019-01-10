@@ -1,4 +1,4 @@
-package be.groups;
+package be.solodoukhin;
 
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -14,6 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
-public class AbstractConfiguredTest {
+public abstract class ApplicationWithoutContextTest {
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass().getName());
 }

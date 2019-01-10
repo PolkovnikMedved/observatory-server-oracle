@@ -1,9 +1,8 @@
-package be.groups.service;
+package be.solodoukhin.service;
 
-import be.groups.AbstractConfiguredTest;
+import be.solodoukhin.ApplicationWithoutContextTest;
 import be.solodoukhin.domain.Structure;
 import be.solodoukhin.domain.StructureElement;
-import be.solodoukhin.service.ReorderElementsService;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,7 +14,7 @@ import java.util.ArrayList;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.10
  */
-public class ReorderElementsServiceTest extends AbstractConfiguredTest {
+public class ReorderElementsServiceTest extends ApplicationWithoutContextTest {
     private ReorderElementsService service = new ReorderElementsService();
 
     @Test

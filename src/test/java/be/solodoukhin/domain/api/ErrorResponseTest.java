@@ -1,7 +1,6 @@
-package be.groups.domain.api;
+package be.solodoukhin.domain.api;
 
-import be.groups.AbstractConfiguredTest;
-import be.solodoukhin.domain.api.ErrorResponse;
+import be.solodoukhin.ApplicationWithoutContextTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,7 +10,7 @@ import org.junit.Test;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
-public class ErrorResponseTest extends AbstractConfiguredTest {
+public class ErrorResponseTest extends ApplicationWithoutContextTest {
 
     @Test
     public void testConstructor() {

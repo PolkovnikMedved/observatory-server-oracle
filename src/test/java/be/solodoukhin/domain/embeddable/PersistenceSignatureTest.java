@@ -1,7 +1,6 @@
-package be.groups.domain.embeddable;
+package be.solodoukhin.domain.embeddable;
 
-import be.groups.AbstractConfiguredTest;
-import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import be.solodoukhin.ApplicationWithoutContextTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,7 +12,7 @@ import java.time.LocalDate;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
-public class PersistenceSignatureTest extends AbstractConfiguredTest {
+public class PersistenceSignatureTest extends ApplicationWithoutContextTest {
 
     private static final String AUTHOR = "SOLODOUV";
     private static final LocalDate DATE = LocalDate.now();

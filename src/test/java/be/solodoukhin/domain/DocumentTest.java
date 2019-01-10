@@ -1,9 +1,6 @@
-package be.groups.domain;
+package be.solodoukhin.domain;
 
-import be.groups.AbstractConfiguredTest;
-import be.solodoukhin.domain.Document;
-import be.solodoukhin.domain.DocumentCategory;
-import be.solodoukhin.domain.Version;
+import be.solodoukhin.ApplicationWithoutContextTest;
 import be.solodoukhin.domain.embeddable.Label;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
 import org.junit.Assert;
@@ -17,7 +14,7 @@ import java.util.ArrayList;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
-public class DocumentTest extends AbstractConfiguredTest {
+public class DocumentTest extends ApplicationWithoutContextTest {
 
     @Test
     public void testConstructor() {

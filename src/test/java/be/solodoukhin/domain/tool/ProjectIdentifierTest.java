@@ -1,7 +1,6 @@
-package be.groups.domain.tool;
+package be.solodoukhin.domain.tool;
 
-import be.groups.AbstractConfiguredTest;
-import be.solodoukhin.domain.tool.ProjectIdentifier;
+import be.solodoukhin.ApplicationWithoutContextTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,7 +10,7 @@ import org.junit.Test;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
-public class ProjectIdentifierTest extends AbstractConfiguredTest {
+public class ProjectIdentifierTest extends ApplicationWithoutContextTest {
 
     private static final String PROJECT_NAME = "observatory-server";
     private static final String PROJECT_VERSION = "1.0.0";
