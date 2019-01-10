@@ -1,8 +1,6 @@
-package be.groups.domain;
+package be.solodoukhin.domain;
 
-import be.groups.AbstractConfiguredTest;
-import be.solodoukhin.domain.Structure;
-import be.solodoukhin.domain.StructureElement;
+import be.solodoukhin.ApplicationWithoutContextTest;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,7 +13,7 @@ import java.util.ArrayList;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
-public class StructureTest extends AbstractConfiguredTest {
+public class StructureTest extends ApplicationWithoutContextTest {
 
     private static final String TEST_STRUCTURE_NAME = "UNIT_TEST";
 

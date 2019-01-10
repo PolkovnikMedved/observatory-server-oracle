@@ -1,7 +1,6 @@
-package be.groups.domain.embeddable;
+package be.solodoukhin.domain.embeddable;
 
-import be.groups.AbstractConfiguredTest;
-import be.solodoukhin.domain.embeddable.Label;
+import be.solodoukhin.ApplicationWithoutContextTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,7 +10,7 @@ import org.junit.Test;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
-public class LabelTest extends AbstractConfiguredTest {
+public class LabelTest extends ApplicationWithoutContextTest {
 
     @Test
     public void testConstructor() {

@@ -1,8 +1,6 @@
-package be.groups.domain;
+package be.solodoukhin.domain;
 
-import be.groups.AbstractConfiguredTest;
-import be.solodoukhin.domain.Structure;
-import be.solodoukhin.domain.Version;
+import be.solodoukhin.ApplicationWithoutContextTest;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,7 +11,7 @@ import org.junit.Test;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
-public class VersionTest extends AbstractConfiguredTest {
+public class VersionTest extends ApplicationWithoutContextTest {
 
     private static final String VERSION_TEST_NAME = "UNIT_TEST";
 
