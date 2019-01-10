@@ -29,11 +29,20 @@ public class Document implements Serializable {
     private Label label;
 
     @OrderBy("name ASC")
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "NO_DOCUMENT")
     private List<Version> versions;
 
-    @ManyToOne
+    @Column(name = "FL_OBLIGATOIRE")
+    private int mandatoryFlag = 0;
+
+    @Column(name = "FL_UN_SEUL_EX")
+    private int uniqueCopy = 0;
+
+    @Column(name = "FL_UN_EXEMPLAIRE_AU_MOINS")
+    private int atLeastOneCopy = 0;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "NO_CATEGORIE")
     private DocumentCategory category;
 
@@ -76,6 +85,34 @@ public class Document implements Serializable {
         this.versions = versions;
     }
 
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    public int getMandatoryFlag() {
+        return mandatoryFlag;
+    }
+
+    public void setMandatoryFlag(int mandatoryFlag) {
+        this.mandatoryFlag = mandatoryFlag;
+    }
+
+    public int getUniqueCopy() {
+        return uniqueCopy;
+    }
+
+    public void setUniqueCopy(int uniqueCopy) {
+        this.uniqueCopy = uniqueCopy;
+    }
+
+    public int getAtLeastOneCopy() {
+        return atLeastOneCopy;
+    }
+
+    public void setAtLeastOneCopy(int atLeastOneCopy) {
+        this.atLeastOneCopy = atLeastOneCopy;
+    }
+
     public DocumentCategory getCategory() {
         return category;
     }
@@ -97,7 +134,12 @@ public class Document implements Serializable {
         return "Document{" +
                 "number=" + number +
                 ", label=" + label +
+                ", versions=" + versions +
+                ", mandatoryFlag=" + mandatoryFlag +
+                ", uniqueCopy=" + uniqueCopy +
+                ", atLeastOneCopy=" + atLeastOneCopy +
                 ", category=" + category +
+                ", signature=" + signature +
                 '}';
     }
 }
