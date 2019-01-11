@@ -33,6 +33,7 @@ public class DocumentControllerTest extends ApplicationTest {
     private final int testDocumentNumber = 99999;
     private final int testDocumentCategoryNumber = 99999;
     private final String testVersionName = "TEST_UNITAIRE";
+    private final String testDocumentFrenchLabel = "TEST_UNITAIRE";
 
     @Autowired
     private MockMvc mvc;
@@ -45,7 +46,7 @@ public class DocumentControllerTest extends ApplicationTest {
         LOGGER.info("DocumentControllerTest.test_00_createTestDocument()");
         Document document = new Document();
         document.setNumber(this.testDocumentNumber);
-        document.setLabel(new Label("TEST_UNITAIRE", "TEST_UNITAIRE", "TEST_UNITAIRE", "TEST_UNITAIRE"));
+        document.setLabel(new Label(this.testDocumentFrenchLabel, "TEST_UNITAIRE", "TEST_UNITAIRE", "TEST_UNITAIRE"));
         document.setSignature(new PersistenceSignature("TEST_UNIT"));
 
         Version version = new Version();
@@ -70,7 +71,6 @@ public class DocumentControllerTest extends ApplicationTest {
         LOGGER.info("DocumentControllerTest.test_01_readCreatedDocument()");
         Document savedDocument = this.documentRepository.getOne(this.testDocumentNumber);
 
-        System.out.println("Saved document " +  savedDocument);
         Assert.assertNotNull(savedDocument);
         Assert.assertNotNull(savedDocument.getVersions());
         Assert.assertEquals(1, savedDocument.getVersions().size());
@@ -93,6 +93,43 @@ public class DocumentControllerTest extends ApplicationTest {
     @Test
     public void test_02_updateVersion() {
         LOGGER.info("DocumentControllerTest.test_01_updateVersion()");
+    }
+
+    @Test
+    public void test_03_testGetAll() throws Exception {
+        LOGGER.info("DocumentControllerTest.test_03_testGetAll()");
+        mvc.perform(MockMvcRequestBuilders.get("/document/all"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").isNumber());
+    }
+
+    @Test
+    public void test_04_testSearchDocumentNumber() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/document/all?documentNumber=" + this.testDocumentNumber))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").isNumber())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value("1"));
+    }
+
+    @Test
+    public void test_05_testSearchDocumentName() throws Exception
+    {
+        mvc.perform(MockMvcRequestBuilders.get("/document/all?documentName="  + this.testDocumentFrenchLabel))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.elements").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").isNumber())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value("1"));
     }
 
     @Test
