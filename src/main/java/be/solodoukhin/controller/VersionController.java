@@ -57,7 +57,7 @@ public class VersionController {
 
         Optional<Version> v = this.versionRepository.findById(version.getName());
         if(v.isPresent()){
-            v.get().setDfaName(version.getDfaName());
+            v.get().setDfaName(version.getDfaName().orElse(null));
             v.get().setDescription(version.getDescription());
             v.get().setStructure(version.getStructure());
             v.get().getSignature().setModification("SOLODOUV");

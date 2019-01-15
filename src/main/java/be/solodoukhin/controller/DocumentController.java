@@ -85,9 +85,13 @@ public class DocumentController {
 
             if(receivedVersion.isPresent()) { // found version => see if we have to update the orignal one
 
-                if(!originalVersion.getDfaName().equalsIgnoreCase(receivedVersion.get().getDfaName())) {
+                if(originalVersion.getDfaName().isPresent() && receivedVersion.get().getDfaName().isPresent()) {
                     LOGGER.info("Update DFA for version " + originalVersion.getName());
-                    originalVersion.setDfaName(receivedVersion.get().getDfaName());
+                    originalVersion.setDfaName(receivedVersion.get().getDfaName().get());
+                    originalVersion.getSignature().setModification("SOLODOUV");
+                } else if(originalVersion.getDfaName().isPresent() && (!receivedVersion.get().getDfaName().isPresent() || receivedVersion.get().getDfaName().get().trim().equalsIgnoreCase("") )) {
+                    LOGGER.info("Update DFA for version " + originalVersion.getName());
+                    originalVersion.setDfaName(null);
                     originalVersion.getSignature().setModification("SOLODOUV");
                 }
 
@@ -126,13 +130,15 @@ public class DocumentController {
             LOGGER.info("New versions size = " + originalDocument.get().getVersions().size());
         }
 
+        Document savedDocument;
+
         try{
-            this.documentRepository.save(originalDocument.get());
+            savedDocument = this.documentRepository.save(originalDocument.get());
         } catch (Exception e){
             LOGGER.error("An error occurred", e);
             return ResponseEntity.badRequest().body(new ErrorResponse(400, e.getMessage()));
         }
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(savedDocument);
     }
 }

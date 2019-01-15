@@ -7,6 +7,7 @@ import be.solodoukhin.domain.Version;
 import be.solodoukhin.domain.embeddable.Label;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.DocumentRepository;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -91,13 +92,8 @@ public class DocumentControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test_02_updateVersion() {
-        LOGGER.info("DocumentControllerTest.test_01_updateVersion()");
-    }
-
-    @Test
-    public void test_03_testGetAll() throws Exception {
-        LOGGER.info("DocumentControllerTest.test_03_testGetAll()");
+    public void test_04_testGetAll() throws Exception {
+        LOGGER.info("DocumentControllerTest.test_04_testGetAll()");
         mvc.perform(MockMvcRequestBuilders.get("/document/all"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -108,7 +104,8 @@ public class DocumentControllerTest extends ApplicationTest {
     }
 
     @Test
-    public void test_04_testSearchDocumentNumber() throws Exception {
+    public void test_05_testSearchDocumentNumber() throws Exception {
+        LOGGER.info("DocumentControllerTest.test_05_testSearchDocumentNumber()");
         mvc.perform(MockMvcRequestBuilders.get("/document/all?documentNumber=" + this.testDocumentNumber))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -122,6 +119,7 @@ public class DocumentControllerTest extends ApplicationTest {
     @Test
     public void test_05_testSearchDocumentName() throws Exception
     {
+        LOGGER.info("DocumentControllerTest.test_05_testSearchDocumentName()");
         mvc.perform(MockMvcRequestBuilders.get("/document/all?documentName="  + this.testDocumentFrenchLabel))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -130,6 +128,69 @@ public class DocumentControllerTest extends ApplicationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.elements").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value("1"));
+    }
+
+    @Test
+    @Transactional
+    public void test_06_addVersion() throws Exception
+    {
+        LOGGER.info("DocumentControllerTest.test_06_addVersion()");
+        Document document = this.documentRepository.getOne(testDocumentNumber);
+        Assert.assertNotNull(document);
+        Assert.assertNotNull(document.getVersions());
+        Assert.assertNotEquals(0, document.getVersions().size());
+
+        Version version = new Version();
+        version.setName(testVersionName + "_2");
+        version.setDfaName("FOO");
+        version.setDescription("BAR");
+        version.setSignature(new PersistenceSignature(testVersionName));
+        version.getSignature().setModification(testVersionName);
+
+        document.addVersion(version);
+
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+        String json = writer.writeValueAsString(document);
+
+        mvc.perform(
+                MockMvcRequestBuilders.put("/document/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.versions").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.versions["+ (document.getVersions().size() - 1) +"]").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.versions["+ (document.getVersions().size() - 1) +"].name").value(testVersionName + "_2"));
+    }
+
+    @Test
+    @Transactional
+    public void test_07_removeVersion() throws Exception {
+        LOGGER.info("DocumentControllerTest.test_07_removeVersion()");
+        Document document = this.documentRepository.getOne(testDocumentNumber);
+        Assert.assertNotNull(document);
+        Assert.assertNotNull(document.getVersions());
+        Assert.assertNotEquals(0, document.getVersions().size());
+
+        document.getVersions().remove(0);
+
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+        String json = writer.writeValueAsString(document);
+
+        mvc.perform(
+                MockMvcRequestBuilders.put("/document/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.versions").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.versions["+ (document.getVersions().size() - 1) +"]").doesNotExist());
     }
 
     @Test

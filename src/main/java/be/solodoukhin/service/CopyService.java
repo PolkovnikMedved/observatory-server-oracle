@@ -20,7 +20,7 @@ public class CopyService {
         Version copy = new Version();
         copy.setName(newVersionName);
         copy.setDescription(base.getDescription());
-        copy.setDfaName(base.getDfaName());
+        copy.setDfaName(base.getDfaName().orElse(null));
         copy.setStructure(base.getStructure());
         return copy;
     }

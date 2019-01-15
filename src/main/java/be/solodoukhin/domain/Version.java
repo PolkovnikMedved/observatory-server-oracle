@@ -4,6 +4,7 @@ import be.solodoukhin.domain.embeddable.PersistenceSignature;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * Author: Solodoukhin Viktor
@@ -23,7 +24,7 @@ public class Version implements Serializable {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(cascade = { CascadeType.ALL })
     @JoinColumn(name = "NOM_STRUCTURE")
     private Structure structure;
 
@@ -40,8 +41,8 @@ public class Version implements Serializable {
         this.name = name;
     }
 
-    public String getDfaName() {
-        return dfaName;
+    public Optional<String> getDfaName() {
+        return Optional.ofNullable(dfaName);
     }
 
     public void setDfaName(String dfaName) {

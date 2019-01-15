@@ -5,13 +5,8 @@ import be.solodoukhin.domain.Structure;
 import be.solodoukhin.domain.StructureElement;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.StructureRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -44,18 +39,6 @@ public class StructuresControllerTest extends ApplicationTest {
 
     @Autowired
     private StructureRepository repository;
-
-    private static ObjectMapper mapper;
-
-    @BeforeClass
-    public static void setUpObjectMapper() {
-        mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        mapper.configure(SerializationFeature.EAGER_SERIALIZER_FETCH, true);
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        mapper.registerModule(new Jdk8Module()); // Workaround for Optional fields
-        mapper.registerModule(new JavaTimeModule()); // Workaround for LocalDate fields
-    }
 
     @Test
     public void test_01_createStructure() {
