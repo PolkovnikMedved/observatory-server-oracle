@@ -8,7 +8,10 @@ import be.solodoukhin.repository.StructureRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -41,6 +44,18 @@ public class StructuresControllerTest extends ApplicationTest {
 
     @Autowired
     private StructureRepository repository;
+
+    private static ObjectMapper mapper;
+
+    @BeforeClass
+    public static void setUpObjectMapper() {
+        mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        mapper.configure(SerializationFeature.EAGER_SERIALIZER_FETCH, true);
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.registerModule(new Jdk8Module()); // Workaround for Optional fields
+        mapper.registerModule(new JavaTimeModule()); // Workaround for LocalDate fields
+    }
 
     @Test
     public void test_01_createStructure() {
@@ -166,15 +181,9 @@ public class StructuresControllerTest extends ApplicationTest {
         Structure structure = this.repository.getOne(STRUCTURE_NAME);
         Assert.assertNotNull(structure);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        mapper.configure(SerializationFeature.EAGER_SERIALIZER_FETCH, true);
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-
         ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
         String json = writer.writeValueAsString(structure);
 
-        //TODO make this work. StructureElement.tag is set like "tag": { present: true } ?!
         mvc.perform(
                 MockMvcRequestBuilders.put("/structure/update-order")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -188,6 +197,104 @@ public class StructuresControllerTest extends ApplicationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.elements[0]").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.elements[0].sequence").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.elements[0].sequence").value("0"));
+    }
+
+    @Test
+    @Transactional
+    public void test_10_testAddElement() throws Exception {
+        LOGGER.info("StructuresControllerTest.test_10_testAddElement()");
+        Structure structure = this.repository.getOne(STRUCTURE_NAME);
+        Assert.assertNotNull(structure);
+
+        structure.setTag("99");
+
+        StructureElement newElement = new StructureElement();
+        newElement.setTag("3");
+        newElement.setDescription("3");
+        newElement.setSequence(3);
+        newElement.setOptional(false);
+        newElement.setRepetitive(true);
+        newElement.setSignature(new PersistenceSignature(STRUCTURE_NAME));
+        newElement.getSignature().setModification(STRUCTURE_NAME);
+
+        structure.addElement(newElement);
+
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+        String json = writer.writeValueAsString(structure);
+
+        mvc.perform(
+                MockMvcRequestBuilders.put("/structure/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+        )
+        .andDo(MockMvcResultHandlers.print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.tag").exists())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.tag").value("99"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.elements").exists())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.elements[2]").exists());
+    }
+
+    @Test
+    @Transactional
+    public void test_11_testRemoveElement() throws Exception {
+        LOGGER.info("StructuresControllerTest.test_11_testRemoveElement()");
+        Structure structure = this.repository.getOne(STRUCTURE_NAME);
+        Assert.assertNotNull(structure);
+        Assert.assertNotNull(structure.getElements());
+        Assert.assertTrue(structure.getElements().size() >= 1);
+
+        structure.getElements().remove(1);
+        structure.setTag("99");
+
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+        String json = writer.writeValueAsString(structure);
+
+        mvc.perform(
+                MockMvcRequestBuilders.put("/structure/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tag").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tag").value("99"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.elements").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.elements[1]").doesNotExist());
+    }
+
+    // This method is in this class but should be moved into a StructureElementControllerTest
+    // When we will have more things to test.
+    @Test
+    @Transactional
+    public void test_50_testUpdateStructureElement() throws Exception {
+        LOGGER.info("StructuresControllerTest.test_50_testUpdateStructureElement()");
+        Structure structure = this.repository.getOne(STRUCTURE_NAME);
+        Assert.assertNotNull(structure);
+        Assert.assertNotNull(structure.getElements());
+        Assert.assertNotEquals(0, structure.getElements().size());
+
+        StructureElement element = structure.getElements().get(0);
+        element.setTag("50");
+
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+        String json = writer.writeValueAsString(element);
+
+        mvc.perform(
+                MockMvcRequestBuilders.put("/structure-element/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+        )
+        .andDo(MockMvcResultHandlers.print())
+        .andExpect(MockMvcResultMatchers.status().isOk())
+        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
+        .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.tag").exists())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.tag").value("50"));
     }
 
     @Test

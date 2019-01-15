@@ -104,13 +104,23 @@ public class StructuresController {
         return this.structureRepository.save(s);
     }
 
-    @PutMapping("update-order")
-    public Structure changeOrder(@RequestBody Structure s)
+    @PutMapping("/update-order")
+    public ResponseEntity<?> changeOrder(@RequestBody Structure s)
     {
         LOGGER.info("Call to StructureController.changeOrder with name = " + s.getName());
         this.reorderElementsService.reorder(s);
         s.getElements().forEach(el -> el.getSignature().setModification("SOLODOUV"));
-        return this.structureRepository.save(s);
+        Structure savedStructure;
+        try{
+            savedStructure = this.structureRepository.save(s);
+            LOGGER.info("Structure has been saved.");
+            LOGGER.info("Saved structure = " + savedStructure);
+        } catch (Exception e) {
+            LOGGER.error("Could save reordered structure : " + s, e);
+            return ResponseEntity.badRequest().body(new ErrorResponse(400, e.getMessage()));
+        }
+
+        return ResponseEntity.ok(savedStructure);
     }
 
     @PutMapping("/update")
