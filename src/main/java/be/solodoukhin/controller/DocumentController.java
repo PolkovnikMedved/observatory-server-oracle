@@ -28,7 +28,7 @@ public class DocumentController {
 
     private DocumentFilterService documentFilterService;
     private DocumentRepository documentRepository;
-    private final static Logger LOGGER = LoggerFactory.getLogger(DocumentController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DocumentController.class);
 
     @Autowired
     public DocumentController(DocumentFilterService documentFilterService, DocumentRepository documentRepository) {
