@@ -2,10 +2,6 @@ package be.solodoukhin.domain;
 
 import be.solodoukhin.domain.embeddable.Label;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -34,13 +30,13 @@ public class Document implements Serializable {
     private List<Version> versions;
 
     @Column(name = "FL_OBLIGATOIRE")
-    private int mandatoryFlag = 0;
+    private Integer mandatoryFlag;
 
     @Column(name = "FL_UN_SEUL_EX")
-    private int uniqueCopy = 0;
+    private Integer uniqueCopy = 0;
 
     @Column(name = "FL_UN_EXEMPLAIRE_AU_MOINS")
-    private int atLeastOneCopy = 0;
+    private Integer atLeastOneCopy = 0;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "NO_CATEGORIE")
@@ -89,7 +85,7 @@ public class Document implements Serializable {
         this.number = number;
     }
 
-    public int getMandatoryFlag() {
+    public Integer getMandatoryFlag() {
         return mandatoryFlag;
     }
 
@@ -97,7 +93,7 @@ public class Document implements Serializable {
         this.mandatoryFlag = mandatoryFlag;
     }
 
-    public int getUniqueCopy() {
+    public Integer getUniqueCopy() {
         return uniqueCopy;
     }
 
@@ -105,7 +101,7 @@ public class Document implements Serializable {
         this.uniqueCopy = uniqueCopy;
     }
 
-    public int getAtLeastOneCopy() {
+    public Integer getAtLeastOneCopy() {
         return atLeastOneCopy;
     }
 

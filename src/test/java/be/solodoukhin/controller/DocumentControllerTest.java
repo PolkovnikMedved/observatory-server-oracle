@@ -47,6 +47,9 @@ public class DocumentControllerTest extends ApplicationTest {
         LOGGER.info("DocumentControllerTest.test_00_createTestDocument()");
         Document document = new Document();
         document.setNumber(this.testDocumentNumber);
+        document.setMandatoryFlag(0);
+        document.setAtLeastOneCopy(0);
+        document.setUniqueCopy(0);
         document.setLabel(new Label(this.testDocumentFrenchLabel, "TEST_UNITAIRE", "TEST_UNITAIRE", "TEST_UNITAIRE"));
         document.setSignature(new PersistenceSignature("TEST_UNIT"));
 
