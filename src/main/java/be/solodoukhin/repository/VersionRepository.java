@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 /**
  * Author: Solodoukhin Viktor
  * Date: 29.11.18
- * Description: TODO
+ * Description: Repository for Version entity containing Spring Data methods
  */
 @Repository
 public interface VersionRepository extends CrudRepository<Version, String> {}

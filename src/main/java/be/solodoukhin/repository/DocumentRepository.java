@@ -13,7 +13,7 @@ import java.util.Optional;
 /**
  * Author: Solodoukhin Viktor
  * Date: 28.11.18
- * Description: TODO
+ * Description: Repository for Document entity containing Spring Data methods
  */
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, Integer> {

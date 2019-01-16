@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Author: Solodoukhin Viktor
  * Date: 28.11.18
- * Description: TODO
+ * Description: this controller is used to see if the service is running and which version of the service is running
  */
 @RestController
 public class WelcomeController {

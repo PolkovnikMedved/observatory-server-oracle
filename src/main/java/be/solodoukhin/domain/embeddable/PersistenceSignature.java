@@ -10,7 +10,7 @@ import java.time.LocalDate;
 /**
  * Author: Solodoukhin Viktor
  * Date: 28.11.18
- * Description: TODO
+ * Description: this class is used to keep trace of the user and the date on creating/modifying data
  */
 @Embeddable
 public class PersistenceSignature implements Serializable {
@@ -52,15 +52,15 @@ public class PersistenceSignature implements Serializable {
         this.createdBy = createdBy;
     }
 
-    public LocalDate getCreatedAt() {
+    LocalDate getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    void setCreatedAt(LocalDate createdAt) {
         this.createdAt = createdAt;
     }
 
-    public String getModifiedBy() {
+    String getModifiedBy() {
         return modifiedBy;
     }
 
@@ -68,11 +68,11 @@ public class PersistenceSignature implements Serializable {
         this.modifiedBy = modifiedBy;
     }
 
-    public LocalDate getModifiedAt() {
+    LocalDate getModifiedAt() {
         return modifiedAt;
     }
 
-    public void setModifiedAt(LocalDate modifiedAt) {
+    void setModifiedAt(LocalDate modifiedAt) {
         this.modifiedAt = modifiedAt;
     }
 

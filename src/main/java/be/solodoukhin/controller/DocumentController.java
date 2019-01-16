@@ -20,15 +20,15 @@ import java.util.Optional;
 /**
  * Author: Solodoukhin Viktor
  * Date: 01.12.18
- * Description: TODO
+ * Description: Document REST methods
  */
 @RestController
 @RequestMapping("/document")
 public class DocumentController {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(DocumentController.class);
     private DocumentFilterService documentFilterService;
     private DocumentRepository documentRepository;
+    private final static Logger LOGGER = LoggerFactory.getLogger(DocumentController.class);
 
     @Autowired
     public DocumentController(DocumentFilterService documentFilterService, DocumentRepository documentRepository) {
@@ -47,7 +47,7 @@ public class DocumentController {
     )
     {
         LOGGER.info("Call to DocumentController.getFilteredPage with page = {}", pageNumber);
-        LOGGER.info("Parameters: documentNumber=" + documentNumber + ", documentName=" + documentName + ", documentCategory=" + documentCategory + ", createdBy=" + createdBy + ", modifiedBy=" + modifiedBy);
+        LOGGER.info("Parameters: documentNumber={}, documentName={}, documentCategory={}, createdBy={}, modifiedBy={}", documentNumber, documentName, documentCategory, createdBy, modifiedBy);
         if (pageNumber == null){
             pageNumber = 0;
         }
@@ -63,14 +63,14 @@ public class DocumentController {
     @GetMapping("/{id}")
     public Document getOne(@PathVariable("id") Integer id)
     {
-        LOGGER.info("Call to DocumentController.getOne with id = " + id);
+        LOGGER.info("Call to DocumentController.getOne with id = {}", id);
         return this.documentRepository.getOne(id);
     }
 
     // Warning update document CAN NOT update DOCUMENT TABLE. It's used to do cascade operations on version.
     @PutMapping("/update")
     public ResponseEntity<?> update(@RequestBody Document document) {
-        LOGGER.info("Call to DocumentController.update with id = " + document.getNumber());
+        LOGGER.info("Call to DocumentController.update with id = {}", document.getNumber());
 
         Optional<Document> originalDocument = this.documentRepository.findById(document.getNumber());
         if(!originalDocument.isPresent()) {
@@ -86,17 +86,17 @@ public class DocumentController {
             if(receivedVersion.isPresent()) { // found version => see if we have to update the orignal one
 
                 if(originalVersion.getDfaName().isPresent() && receivedVersion.get().getDfaName().isPresent()) {
-                    LOGGER.info("Update DFA for version " + originalVersion.getName());
+                    LOGGER.info("Update DFA for version {}", originalVersion.getName());
                     originalVersion.setDfaName(receivedVersion.get().getDfaName().get());
                     originalVersion.getSignature().setModification("SOLODOUV");
                 } else if(originalVersion.getDfaName().isPresent() && (!receivedVersion.get().getDfaName().isPresent() || receivedVersion.get().getDfaName().get().trim().equalsIgnoreCase("") )) {
-                    LOGGER.info("Update DFA for version " + originalVersion.getName());
+                    LOGGER.info("Update DFA for version {}", originalVersion.getName());
                     originalVersion.setDfaName(null);
                     originalVersion.getSignature().setModification("SOLODOUV");
                 }
 
                 if(!receivedVersion.get().getDescription().equalsIgnoreCase(originalVersion.getDescription())) {
-                    LOGGER.info("Update description for version: " + originalVersion.getName());
+                    LOGGER.info("Update description for version: {}", originalVersion.getName());
                     originalVersion.setDescription(receivedVersion.get().getDescription());
                     originalVersion.getSignature().setModification("SOLODOUV");
                 }
@@ -107,27 +107,27 @@ public class DocumentController {
         }
         // add new versions
         if(document.getVersions().size() > originalDocument.get().getVersions().size()) {
-            LOGGER.info("Document versions " + document.getVersions().size() + " > original versions " + originalDocument.get().getVersions().size());
+            LOGGER.info("Document versions {} > original versions {}", document.getVersions().size(), originalDocument.get().getVersions().size());
             List<Version> newVersions = new ArrayList<>();
             for(Version received: document.getVersions()) {
                 boolean found = false;
                 for(Version original : originalDocument.get().getVersions()) {
                     if(original.getName().equalsIgnoreCase(received.getName())) {
-                        LOGGER.info("Found : " + original.getName());
+                        LOGGER.info("Found : {}", original.getName());
                         found = true;
                         break;
                     }
                 }
                 if(!found) {
-                    LOGGER.info("Not found : " + received.getName());
+                    LOGGER.info("Not found : {}", received.getName());
                     received.setSignature(new PersistenceSignature("SOLODOUV"));
                     received.getSignature().setModification("SOLODOUV");
                     newVersions.add(received);
                 }
             }
-            LOGGER.info("New versions size = " + newVersions.size());
+            LOGGER.info("New versions size = {}", newVersions.size());
             originalDocument.get().getVersions().addAll(newVersions);
-            LOGGER.info("New versions size = " + originalDocument.get().getVersions().size());
+            LOGGER.info("New versions size = {}", originalDocument.get().getVersions().size());
         }
 
         Document savedDocument;

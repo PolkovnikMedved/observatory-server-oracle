@@ -18,7 +18,7 @@ import java.util.Optional;
 /**
  * Author: Solodoukhin Viktor
  * Date: 01.12.18
- * Description: TODO
+ * Description: Version REST methods
  */
 @RestController
 @RequestMapping("/version")
@@ -38,7 +38,7 @@ public class VersionController {
     // Not used, we use document.update since we cascade all operations for version
     @PostMapping("/add")
     public Version save(@RequestBody Version version){
-        LOGGER.info("Call to VersionController.save with version id = " + version.getName());
+        LOGGER.info("Call to VersionController.save with version id = {}", version.getName());
         version.setSignature(new PersistenceSignature("SOLODOUV"));
         return this.versionRepository.save(version);
     }
@@ -46,14 +46,14 @@ public class VersionController {
     @GetMapping("/{id}")
     public Version getOne(@PathVariable String id)
     {
-        LOGGER.info("Call to VersionController.getOne with id = " + id);
+        LOGGER.info("Call to VersionController.getOne with id = {}", id);
         return this.versionRepository.findById(id).orElse(null);
     }
 
     @PutMapping("/update")
     public ResponseEntity<Version> update(@RequestBody Version version)
     {
-        LOGGER.info("Call to VersionController.update with version id = " + version.getName());
+        LOGGER.info("Call to VersionController.update with version id = {}", version.getName());
 
         Optional<Version> v = this.versionRepository.findById(version.getName());
         if(v.isPresent()){
@@ -72,7 +72,7 @@ public class VersionController {
     @GetMapping("/copy")
     public ResponseEntity<?> copyVersion(@RequestParam("from") String from, @RequestParam("to") String to)
     {
-        LOGGER.info("Call to VersionController.copyVersion from = '" + from + "', to = '" + to + "'");
+        LOGGER.info("Call to VersionController.copyVersion from = '{}' to '{}'", from, to);
         // Get the document that contains the version
         Optional<Document> document = this.documentRepository.findByVersion(from);
 
@@ -91,13 +91,13 @@ public class VersionController {
             }
             else
             {
-                LOGGER.warn("Could not find version " + from);
+                LOGGER.warn("Could not find version {}", from);
                 return ResponseEntity.badRequest().body(new ErrorResponse(400, "Could not find version"));
             }
         }
         else
         {
-            LOGGER.warn("Could not find document for version " + from);
+            LOGGER.warn("Could not find document for version {}", from);
             return ResponseEntity.badRequest().body(new ErrorResponse(400, "Could not find version document"));
         }
     }

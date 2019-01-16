@@ -5,7 +5,7 @@ import javax.persistence.AttributeConverter;
 /**
  * Author: Solodoukhin Viktor
  * Date: 28.11.18
- * Description: TODO
+ * Description: This converter helps us to convert CHAR(1) database field into a Boolean Java field
  */
 public class CharToBooleanConverter implements AttributeConverter<Boolean, String> {
 

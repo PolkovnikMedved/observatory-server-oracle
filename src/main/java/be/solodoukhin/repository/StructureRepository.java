@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Author: Solodoukhin Viktor
  * Date: 29.11.18
- * Description: TODO
+ * Description: Repository for Structure entity containing Spring Data methods
  */
 @Repository
 public interface StructureRepository extends JpaRepository<Structure, String> {

@@ -15,11 +15,11 @@ public class ErrorResponse {
         this.message = message;
     }
 
-    public int getCode() {
+    int getCode() {
         return code;
     }
 
-    public String getMessage() {
+    String getMessage() {
         return message;
     }
 }

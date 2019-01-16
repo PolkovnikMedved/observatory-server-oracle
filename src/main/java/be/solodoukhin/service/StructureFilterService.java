@@ -17,33 +17,21 @@ import org.springframework.stereotype.Service;
 public class StructureFilterService {
 
     private final StructureRepository structureRepository;
+    private final EmptyStringService emptyStringService;
 
     @Autowired
-    public StructureFilterService(StructureRepository structureRepository) {
+    public StructureFilterService(StructureRepository structureRepository, EmptyStringService emptyStringService) {
         this.structureRepository = structureRepository;
+        this.emptyStringService = emptyStringService;
     }
 
     public Page<Structure> getFilteredStructures(String name, String tag, String description, String createdBy, String modifiedBy, Integer page)
     {
-        if(name != null && name.trim().equalsIgnoreCase("")){
-            name = null;
-        }
-
-        if(tag != null && tag.trim().equalsIgnoreCase("")){
-            tag = null;
-        }
-
-        if(description != null && description.trim().equalsIgnoreCase("")){
-            description = null;
-        }
-
-        if(createdBy != null && createdBy.trim().equalsIgnoreCase("")){
-            createdBy = null;
-        }
-
-        if(modifiedBy != null && modifiedBy.trim().equalsIgnoreCase("")){
-            modifiedBy = null;
-        }
+        name = this.emptyStringService.parseEmptyString(name);
+        tag = this.emptyStringService.parseEmptyString(tag);
+        description = this.emptyStringService.parseEmptyString(description);
+        createdBy = this.emptyStringService.parseEmptyString(createdBy);
+        modifiedBy = this.emptyStringService.parseEmptyString(modifiedBy);
 
         // Let us get pages of 12 elements sorted by structure name
         Pageable pageable = PageRequest.of(page, 15, Sort.Direction.ASC, "name");
