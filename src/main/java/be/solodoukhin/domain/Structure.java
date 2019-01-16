@@ -3,17 +3,18 @@ package be.solodoukhin.domain;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Author: Solodoukhin Viktor
  * Date: 28.11.18
- * Description: TODO
+ * Description: Entity for obs_structure table. obs_structure2 should became obs_structure before last deployment
  */
 @Entity
 @Table(name = "OBS_STRUCTURE2")
-public class Structure {
+public class Structure implements Serializable {
 
     @Id
     @Column(name = "NOM_STRUCTURE")

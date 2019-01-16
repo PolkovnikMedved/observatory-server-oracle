@@ -37,7 +37,7 @@ public class StructureElementController {
 
     @PutMapping("/update")
     public ResponseEntity<?> update(@RequestBody StructureElement el) {
-        LOGGER.info("Call to StructureElementController.update with element number = " + el.getId());
+        LOGGER.info("Call to StructureElementController.update with element number = {}", el.getId());
         Optional<StructureElement> element = repository.findById(el.getId());
         if(element.isPresent()) {
 

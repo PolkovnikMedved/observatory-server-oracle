@@ -3,15 +3,16 @@ package be.solodoukhin.domain;
 import be.solodoukhin.domain.embeddable.Label;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Author: Solodoukhin Viktor
  * Date: 28.11.18
- * Description: TODO
+ * Description: Entity for table categorie_documents. Should be read-only !
  */
 @Entity
 @Table(name = "CATEGORIE_DOCUMENTS")
-public class DocumentCategory {
+public class DocumentCategory implements Serializable {
 
     @Id
     @Column(name = "NO_CATEGORIE")

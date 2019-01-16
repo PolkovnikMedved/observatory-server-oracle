@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Author: Solodoukhin Viktor
  * Date: 28.11.18
- * Description: TODO
+ * Description: Entity for table document. Should be read-only !
  */
 @Entity
 @Table(name = "DOCUMENT")
@@ -23,7 +23,7 @@ public class Document implements Serializable {
 
     @Id
     @Column(name = "NO_DOCUMENT")
-    private Integer number; //TODO set int
+    private Integer number;
 
     @Embedded
     private Label label;
@@ -49,7 +49,7 @@ public class Document implements Serializable {
     @Embedded
     private PersistenceSignature signature;
 
-    public Document() {}
+    public Document() { /* This constructor is used by Hibernate */}
 
     public Integer getNumber() {
         return number;

@@ -20,8 +20,6 @@ public class TnsAdmin {
     /**
      * Uses the oracle.net.tns_admin property or (if missing) the path property,
      * to look for the directory in which the file tnsnames.ora is to be found
-     *
-     * @return A string, with the found directory
      */
     public static void init() {
         String tnsAdmin = System.getenv(ENV_VAR_TNS);
@@ -48,15 +46,10 @@ public class TnsAdmin {
         }
         if (StringUtils.hasText(tnsAdmin)) {
             System.setProperty(ENV_VAR_TNS, tnsAdmin);
-        } else {
-            LOGGER.warn(
-                    "The environment path variable does not contain the Oracle BIN-directory, necessary to find tnsnames.ora!");
-            LOGGER.info("    To solve this problem you have 2 possbible solutions : ");
-            LOGGER.info("        1. Modify the path variable of your system and set the Oracle BIN directory");
-            LOGGER.info("               (the parent of this directory contains tnsnames.ora in subdirectory network/admin)");
-            LOGGER.info("        2. Set the 'oracle.net.tns_admin' system property = the directory which contains tnsnames.ora");
-        }
+        } else showError();
     }
+
+    private TnsAdmin() {}
 
     private static boolean tnsNamesFileExists(File pathDirectory) {
         boolean exists = false;
@@ -65,5 +58,13 @@ public class TnsAdmin {
             exists = true;
         }
         return exists;
+    }
+
+    private static void showError() {
+        LOGGER.warn("The environment path variable does not contain the Oracle BIN-directory, necessary to find tnsnames.ora!");
+        LOGGER.info("    To solve this problem you have 2 possbible solutions : ");
+        LOGGER.info("        1. Modify the path variable of your system and set the Oracle BIN directory");
+        LOGGER.info("               (the parent of this directory contains tnsnames.ora in subdirectory network/admin)");
+        LOGGER.info("        2. Set the 'oracle.net.tns_admin' system property = the directory which contains tnsnames.ora");
     }
 }

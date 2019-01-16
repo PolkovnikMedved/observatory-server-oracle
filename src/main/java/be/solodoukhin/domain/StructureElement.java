@@ -4,22 +4,23 @@ import be.solodoukhin.domain.converter.CharToBooleanConverter;
 import be.solodoukhin.domain.embeddable.PersistenceSignature;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Optional;
 
 /**
  * Author: Solodoukhin Viktor
  * Date: 28.11.18
- * Description: TODO
+ * Description: Entity for obs_structure_element table. After last deployment obs_structure_element2 should became obs_structure_element
  */
 @Entity
 @Table(name = "OBS_STRUCTURE_ELEMENT2")
 @SequenceGenerator(name = "structure_element_seq", sequenceName = "structure_element_seq", allocationSize = 1)
-public class StructureElement {
+public class StructureElement implements Serializable {
 
     @Id
     @Column(name = "NO_ELEMENT")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "structure_element_seq")
-    private Long id; // TODO set long
+    private Long id;
 
     @Column(name = "TAG")
     private String tag;
@@ -49,9 +50,7 @@ public class StructureElement {
 
     public StructureElement(StructureElement that) {
         this.id = that.getId();
-        if(that.getTag().isPresent()) {
-            this.tag = that.getTag().get();
-        }
+        this.tag = that.getTag().orElse(null);
         this.description = that.getDescription();
         this.sequence = that.getSequence();
         this.optional = that.isOptional();

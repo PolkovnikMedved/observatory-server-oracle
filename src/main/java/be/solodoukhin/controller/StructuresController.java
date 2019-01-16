@@ -23,6 +23,7 @@ import java.util.Optional;
  *
  * @author viktor.solodoukhin@groups.be
  * @since 2018.12.06
+ * Description: Structure REST methods
  */
 @RestController
 @RequestMapping("/structure")
@@ -51,7 +52,7 @@ public class StructuresController {
 
     @GetMapping("/is-used")
     public Boolean isUsed(@RequestParam("name") String name) {
-        LOGGER.info("Call to StructuresController.isUsed with name = " + name);
+        LOGGER.info("Call to StructuresController.isUsed with name = {}", name);
         return this.structureRepository.isUsedAsType(name);
     }
 
@@ -65,8 +66,8 @@ public class StructuresController {
             @RequestParam(value = "page", required = false) Integer page
             )
     {
-        LOGGER.info("Call to StructuresController.getAll with page = " + page);
-        LOGGER.info("Parameters: name=" + name + ", tag=" + tag + ", description=" + description + ", createdBy=" + createdBy +", modifiedBy=" + modifiedBy);
+        LOGGER.info("Call to StructuresController.getAll with page = {}", page);
+        LOGGER.info("Parameters: name={}, tag={}, description={}, createdBy={}, modifiedBy={}", name, tag, description, createdBy, modifiedBy);
 
         if (page == null){
             page = 0;
@@ -83,7 +84,7 @@ public class StructuresController {
     @GetMapping("/{name}")
     public ResponseEntity<Structure> getOne(@PathVariable("name") String name)
     {
-        LOGGER.info("Call to StructuresController.getOne with name = " + name);
+        LOGGER.info("Call to StructuresController.getOne with name={}", name);
         Optional<Structure> found = this.structureRepository.findById(name);
         if(found.isPresent()){
             return ResponseEntity.ok(found.get());
@@ -97,9 +98,9 @@ public class StructuresController {
     @PostMapping("/add")
     public Structure add(@RequestBody Structure s)
     {
-        LOGGER.info("Call to StructuresController.save with structure name  = " + s.getName());
-        LOGGER.info("Call to StructuresController.save with structure tag   = " + s.getTag());
-        LOGGER.info("Call to StructuresController.save with structure descr = " + s.getDescription());
+        LOGGER.info("Call to StructuresController.save with structure name  ={}", s.getName());
+        LOGGER.info("Call to StructuresController.save with structure tag   ={}", s.getTag());
+        LOGGER.info("Call to StructuresController.save with structure descr ={}", s.getDescription());
         s.setSignature(new PersistenceSignature("SOLODOUV"));
         return this.structureRepository.save(s);
     }
@@ -107,14 +108,14 @@ public class StructuresController {
     @PutMapping("/update-order")
     public ResponseEntity<?> changeOrder(@RequestBody Structure s)
     {
-        LOGGER.info("Call to StructureController.changeOrder with name = " + s.getName());
+        LOGGER.info("Call to StructureController.changeOrder with name ={}", s.getName());
         this.reorderElementsService.reorder(s);
         s.getElements().forEach(el -> el.getSignature().setModification("SOLODOUV"));
         Structure savedStructure;
         try{
             savedStructure = this.structureRepository.save(s);
             LOGGER.info("Structure has been saved.");
-            LOGGER.info("Saved structure = " + savedStructure);
+            LOGGER.info("Saved structure = {}", savedStructure);
         } catch (Exception e) {
             LOGGER.error("Could save reordered structure : " + s, e);
             return ResponseEntity.badRequest().body(new ErrorResponse(400, e.getMessage()));
@@ -126,21 +127,21 @@ public class StructuresController {
     @PutMapping("/update")
     public ResponseEntity<?> update(@RequestBody Structure s)
     {
-        LOGGER.info("Call to StructureController.update with name = " + s.getName());
+        LOGGER.info("Call to StructureController.update with name = {}", s.getName());
         Optional<Structure> found = this.structureRepository.findById(s.getName());
         if(found.isPresent()){
             found.get().setTag(s.getTag());
             found.get().setDescription(s.getDescription());
             found.get().getSignature().setModifiedBy("SOLODOUV");
 
-            LOGGER.info("On va faire " + s.getElements().size() + " boucles.");
+            LOGGER.info("On va faire {} boucles.", s.getElements().size());
             int cpt = 0;
             for(StructureElement receivedElement: s.getElements()) {
                 LOGGER.info("Boucle ....");
                 if(receivedElement.getId() != null && receivedElement.getId() != 0L) { // Existing element
                     for(StructureElement existing: found.get().getElements()) {
                         if(existing.getId().equals(receivedElement.getId())) { // found in the original object
-                            LOGGER.info("On a trouvé notre bonheur: " + existing.getId());
+                            LOGGER.info("On a trouvé notre bonheur: {}", existing.getId());
                             existing.setSequence(cpt);
                             existing.getSignature().setModification("SOLODOUV");
                             break;
@@ -148,7 +149,7 @@ public class StructuresController {
                     }
                 }
                 else { // new element
-                    LOGGER.info("C'est un tout nouvel élément: " + receivedElement);
+                    LOGGER.info("C'est un tout nouvel élément: {}", receivedElement);
                     if(receivedElement.getTypeStructure() == null || receivedElement.getTypeStructure().getName() == null || receivedElement.getTypeStructure().getName().trim().equalsIgnoreCase("")){
                         receivedElement.setTypeStructure(null);
                     }
@@ -161,7 +162,7 @@ public class StructuresController {
                 cpt++;
             }
 
-            LOGGER.info("Structure to save : " + found.get());
+            LOGGER.info("Structure to save : {}", found.get());
 
             Structure saved = null;
             try{
@@ -182,12 +183,12 @@ public class StructuresController {
     @GetMapping("/copy")
     public ResponseEntity<?> copyStructure(@RequestParam("from") String from, @RequestParam("to") String to)
     {
-        LOGGER.info("Call to StructuresController.copy from = '" + from + "', to = '" + to + "'");
+        LOGGER.info("Call to StructuresController.copy from = '{}', to = '{}'", from, to);
         Optional<Structure> fromStructure = this.structureRepository.findById(from);
         if(fromStructure.isPresent() && to != null && !to.trim().equalsIgnoreCase("")) {
             Structure newStructure = this.copyService.createCopyStructure(fromStructure.get(), to);
             newStructure.setSignature(new PersistenceSignature("SOLODOUV"));
-            LOGGER.info("Copy structure = " + newStructure);
+            LOGGER.info("Copy structure = {}", newStructure);
             Structure saved;
             try {
                 saved = this.structureRepository.save(newStructure);
@@ -208,7 +209,7 @@ public class StructuresController {
     @DeleteMapping("/delete")
     public ResponseEntity<?> delete(@RequestParam("name") String name)
     {
-        LOGGER.info("Call to StructuresController.delete with name = " + name);
+        LOGGER.info("Call to StructuresController.delete with name = {}", name);
         try{
             this.structureRepository.deleteById(name);
         } catch (Exception e) {

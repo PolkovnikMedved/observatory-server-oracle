@@ -18,37 +18,27 @@ import org.springframework.stereotype.Service;
 @Service
 public class DocumentFilterService {
 
-    private DocumentRepository documentRepository;
+    private final DocumentRepository documentRepository;
+    private final EmptyStringService emptyStringService;
 
     @Autowired
-    public DocumentFilterService(DocumentRepository documentRepository) {
+    public DocumentFilterService(DocumentRepository documentRepository, EmptyStringService emptyStringService) {
         this.documentRepository = documentRepository;
+        this.emptyStringService = emptyStringService;
     }
 
     public Page<Document> getFilteredDocuments(Integer documentNumber, String documentName, String categoryName, String createdBy, String modifiedBy, Integer pageNumber)
     {
-        if(documentName != null && documentName.trim().equalsIgnoreCase("")){
-            documentName = null;
-        }
-
-        if(categoryName != null && categoryName.trim().equalsIgnoreCase("")){
-            categoryName = null;
-        }
-
-        if(createdBy != null && createdBy.trim().equalsIgnoreCase("")){
-            createdBy = null;
-        }
-
-        if(modifiedBy != null && modifiedBy.trim().equalsIgnoreCase("")){
-            modifiedBy = null;
-        }
+        documentName = this.emptyStringService.parseEmptyString(documentName);
+        categoryName = this.emptyStringService.parseEmptyString(categoryName);
+        createdBy = this.emptyStringService.parseEmptyString(createdBy);
+        modifiedBy = this.emptyStringService.parseEmptyString(modifiedBy);
 
         Pageable pageable = PageRequest.of(pageNumber, 15, Sort.Direction.ASC, "number");
 
         DocumentCategory documentCategoryExample = new DocumentCategory();
         documentCategoryExample.setLabel(new Label());
         documentCategoryExample.getLabel().setFrenchLabel(categoryName);
-        //documentCategoryExample.getLabel().setDutchLabel(categoryName);
 
         Document example = new Document();
         if(documentNumber != null){

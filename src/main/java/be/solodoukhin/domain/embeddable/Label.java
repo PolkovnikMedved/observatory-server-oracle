@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * Author: Solodoukhin Viktor
  * Date: 28.11.18
- * Description: TODO
+ * Description: This class handles multilingual string
  */
 @Embeddable
 public class Label implements Serializable {
@@ -39,7 +39,7 @@ public class Label implements Serializable {
         this.germanLabel = germanLabel;
     }
 
-    public String getFrenchLabel() {
+    String getFrenchLabel() {
         return frenchLabel;
     }
 
@@ -47,7 +47,7 @@ public class Label implements Serializable {
         this.frenchLabel = frenchLabel;
     }
 
-    public String getDutchLabel() {
+    String getDutchLabel() {
         return dutchLabel;
     }
 
@@ -55,7 +55,7 @@ public class Label implements Serializable {
         this.dutchLabel = dutchLabel;
     }
 
-    public String getEnglishLabel() {
+    String getEnglishLabel() {
         return englishLabel;
     }
 
@@ -63,7 +63,7 @@ public class Label implements Serializable {
         this.englishLabel = englishLabel;
     }
 
-    public String getGermanLabel() {
+    String getGermanLabel() {
         return germanLabel;
     }
 

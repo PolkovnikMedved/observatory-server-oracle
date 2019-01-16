@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * Author: Solodoukhin Viktor
  * Date: 28.11.18
- * Description: TODO
+ * Description: Entity for obs_version table
  */
 @Entity
 @Table(name = "OBS_VERSION2")
@@ -31,7 +31,10 @@ public class Version implements Serializable {
     @Embedded
     private PersistenceSignature signature;
 
-    public Version() {}
+    /**
+     * Empty constructor needed for Hibernate
+     */
+    public Version() { /* Just for Hibernate */}
 
     public String getName() {
         return name;

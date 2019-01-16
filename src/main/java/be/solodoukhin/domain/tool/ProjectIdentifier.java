@@ -14,11 +14,11 @@ public class ProjectIdentifier {
         this.projectVersion = projectVersion;
     }
 
-    public String getProjectName() {
+    String getProjectName() {
         return projectName;
     }
 
-    public String getProjectVersion() {
+    String getProjectVersion() {
         return projectVersion;
     }
 }
