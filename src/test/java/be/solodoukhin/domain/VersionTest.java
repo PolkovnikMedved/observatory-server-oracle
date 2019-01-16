@@ -34,7 +34,8 @@ public class VersionTest extends ApplicationWithoutContextTest {
 
         Assert.assertNotNull(version);
         Assert.assertEquals(VERSION_TEST_NAME, version.getName());
-        Assert.assertEquals("0", version.getDfaName());
+        Assert.assertTrue(version.getDfaName().isPresent());
+        Assert.assertEquals("0", version.getDfaName().get());
         Assert.assertEquals("0", version.getDescription());
         Assert.assertNotNull(version.getStructure());
         Assert.assertNotNull(version.getStructure());

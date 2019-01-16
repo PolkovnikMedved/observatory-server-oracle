@@ -2,7 +2,6 @@ package be.solodoukhin.controller;
 
 import be.solodoukhin.ApplicationTest;
 import be.solodoukhin.domain.tool.ProjectIdentifier;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +33,6 @@ public class WelcomeControllerTest extends ApplicationTest {
     public void testWelcome() throws Exception {
         LOGGER.info("WelcomeControllerTest.testWelcome()");
         ProjectIdentifier pi = new ProjectIdentifier(this.projectName, this.projectVersion);
-        ObjectMapper mapper = new ObjectMapper();
 
         this.mvc.perform(MockMvcRequestBuilders.get("/"))
                 .andDo(MockMvcResultHandlers.print())
