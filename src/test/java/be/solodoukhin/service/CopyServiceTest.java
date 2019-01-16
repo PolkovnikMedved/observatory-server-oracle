@@ -37,7 +37,8 @@ public class CopyServiceTest extends ApplicationWithoutContextTest {
         Version copy = service.createCopyVersion(version, "COPY");
         Assert.assertNotNull(copy);
         Assert.assertEquals("COPY", copy.getName());
-        Assert.assertEquals("0", copy.getDfaName());
+        Assert.assertTrue(copy.getDfaName().isPresent());
+        Assert.assertEquals("0", copy.getDfaName().get());
         Assert.assertEquals("0", copy.getDescription());
         Assert.assertNotNull(copy.getStructure());
         Assert.assertNull(copy.getSignature());

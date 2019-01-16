@@ -125,7 +125,7 @@ public class DocumentControllerTest extends ApplicationTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(MockMvcResultMatchers.jsonPath("$").exists())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.elements").exists())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").exists())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.totalElements").value("1"));
     }
