@@ -1,6 +1,6 @@
-package be.solodoukhin.domain;
+package be.solodoukhin.domain.persistent;
 
-import be.solodoukhin.domain.embeddable.Label;
+import be.solodoukhin.domain.persistent.embeddable.Label;
 
 import javax.persistence.*;
 import java.io.Serializable;

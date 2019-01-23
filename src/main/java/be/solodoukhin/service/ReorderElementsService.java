@@ -1,6 +1,6 @@
 package be.solodoukhin.service;
 
-import be.solodoukhin.domain.Structure;
+import be.solodoukhin.domain.persistent.Structure;
 import org.springframework.stereotype.Service;
 
 /**

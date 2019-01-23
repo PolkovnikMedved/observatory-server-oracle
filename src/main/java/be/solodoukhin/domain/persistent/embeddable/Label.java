@@ -1,4 +1,4 @@
-package be.solodoukhin.domain.embeddable;
+package be.solodoukhin.domain.persistent.embeddable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -39,7 +39,7 @@ public class Label implements Serializable {
         this.germanLabel = germanLabel;
     }
 
-    String getFrenchLabel() {
+    public String getFrenchLabel() {
         return frenchLabel;
     }
 

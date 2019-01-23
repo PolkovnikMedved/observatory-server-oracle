@@ -1,9 +1,9 @@
 package be.solodoukhin.controller;
 
-import be.solodoukhin.domain.Document;
-import be.solodoukhin.domain.Version;
+import be.solodoukhin.domain.persistent.Document;
+import be.solodoukhin.domain.persistent.Version;
 import be.solodoukhin.domain.api.ErrorResponse;
-import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.DocumentRepository;
 import be.solodoukhin.repository.VersionRepository;
 import be.solodoukhin.service.CopyService;

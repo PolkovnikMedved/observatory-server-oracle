@@ -1,13 +1,14 @@
 package be.solodoukhin.controller;
 
-import be.solodoukhin.domain.Document;
-import be.solodoukhin.domain.Version;
 import be.solodoukhin.domain.api.ErrorResponse;
-import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import be.solodoukhin.domain.dto.DocumentDTO;
+import be.solodoukhin.domain.persistent.Document;
+import be.solodoukhin.domain.persistent.Version;
+import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.DocumentRepository;
 import be.solodoukhin.service.DocumentFilterService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import be.solodoukhin.service.converter.DocumentConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,18 +23,20 @@ import java.util.Optional;
  * Date: 01.12.18
  * Description: Document REST methods
  */
+@Slf4j
 @RestController
 @RequestMapping("/document")
 public class DocumentController {
 
-    private DocumentFilterService documentFilterService;
-    private DocumentRepository documentRepository;
-    private static final Logger LOGGER = LoggerFactory.getLogger(DocumentController.class);
+    private final DocumentFilterService documentFilterService;
+    private final DocumentRepository documentRepository;
+    private final DocumentConverter converter;
 
     @Autowired
-    public DocumentController(DocumentFilterService documentFilterService, DocumentRepository documentRepository) {
+    public DocumentController(DocumentFilterService documentFilterService, DocumentRepository documentRepository, DocumentConverter converter) {
         this.documentFilterService = documentFilterService;
         this.documentRepository = documentRepository;
+        this.converter = converter;
     }
 
     @GetMapping("/all")
@@ -46,8 +49,8 @@ public class DocumentController {
             @RequestParam(value = "page", required = false) Integer pageNumber
     )
     {
-        LOGGER.info("Call to DocumentController.getFilteredPage with page = {}", pageNumber);
-        LOGGER.info("Parameters: documentNumber={}, documentName={}, documentCategory={}, createdBy={}, modifiedBy={}", documentNumber, documentName, documentCategory, createdBy, modifiedBy);
+        log.info("Call to DocumentController.getFilteredPage with page = {}", pageNumber);
+        log.info("Parameters: documentNumber={}, documentName={}, documentCategory={}, createdBy={}, modifiedBy={}", documentNumber, documentName, documentCategory, createdBy, modifiedBy);
         if (pageNumber == null){
             pageNumber = 0;
         }
@@ -61,16 +64,30 @@ public class DocumentController {
     }
 
     @GetMapping("/{id}")
-    public Document getOne(@PathVariable("id") Integer id)
-    {
-        LOGGER.info("Call to DocumentController.getOne with id = {}", id);
-        return this.documentRepository.getOne(id);
+    public ResponseEntity<DocumentDTO> getOneDTO(@PathVariable("id") Integer id) {
+        log.info("Call to getOneDTO with id = '{}'", id);
+        Optional<Document> document = this.documentRepository.findById(id);
+
+        if(!document.isPresent()) {
+            log.warn("Could not find document with id = '{}'", id);
+            return ResponseEntity.badRequest().build();
+        }
+
+        DocumentDTO response;
+        try {
+            response = this.converter.toDTO(document.get());
+        } catch (Exception e) {
+            log.error("An error occurred converting Document to DTO", e);
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok(response);
     }
 
     // Warning update document CAN NOT update DOCUMENT TABLE. It's used to do cascade operations on version.
     @PutMapping("/update")
     public ResponseEntity<?> update(@RequestBody Document document) {
-        LOGGER.info("Call to DocumentController.update with id = {}", document.getNumber());
+        log.info("Call to DocumentController.update with id = {}", document.getNumber());
 
         Optional<Document> originalDocument = this.documentRepository.findById(document.getNumber());
         if(!originalDocument.isPresent()) {
@@ -86,17 +103,17 @@ public class DocumentController {
             if(receivedVersion.isPresent()) { // found version => see if we have to update the orignal one
 
                 if(originalVersion.getDfaName().isPresent() && receivedVersion.get().getDfaName().isPresent()) {
-                    LOGGER.info("Update DFA for version {}", originalVersion.getName());
+                    log.info("Update DFA for version {}", originalVersion.getName());
                     originalVersion.setDfaName(receivedVersion.get().getDfaName().get());
                     originalVersion.getSignature().setModification("SOLODOUV");
                 } else if(originalVersion.getDfaName().isPresent() && (!receivedVersion.get().getDfaName().isPresent() || receivedVersion.get().getDfaName().get().trim().equalsIgnoreCase("") )) {
-                    LOGGER.info("Update DFA for version {}", originalVersion.getName());
+                    log.info("Update DFA for version {}", originalVersion.getName());
                     originalVersion.setDfaName(null);
                     originalVersion.getSignature().setModification("SOLODOUV");
                 }
 
                 if(!receivedVersion.get().getDescription().equalsIgnoreCase(originalVersion.getDescription())) {
-                    LOGGER.info("Update description for version: {}", originalVersion.getName());
+                    log.info("Update description for version: {}", originalVersion.getName());
                     originalVersion.setDescription(receivedVersion.get().getDescription());
                     originalVersion.getSignature().setModification("SOLODOUV");
                 }
@@ -107,27 +124,27 @@ public class DocumentController {
         }
         // add new versions
         if(document.getVersions().size() > originalDocument.get().getVersions().size()) {
-            LOGGER.info("Document versions {} > original versions {}", document.getVersions().size(), originalDocument.get().getVersions().size());
+            log.info("Document versions {} > original versions {}", document.getVersions().size(), originalDocument.get().getVersions().size());
             List<Version> newVersions = new ArrayList<>();
             for(Version received: document.getVersions()) {
                 boolean found = false;
                 for(Version original : originalDocument.get().getVersions()) {
                     if(original.getName().equalsIgnoreCase(received.getName())) {
-                        LOGGER.info("Found : {}", original.getName());
+                        log.info("Found : {}", original.getName());
                         found = true;
                         break;
                     }
                 }
                 if(!found) {
-                    LOGGER.info("Not found : {}", received.getName());
+                    log.info("Not found : {}", received.getName());
                     received.setSignature(new PersistenceSignature("SOLODOUV"));
                     received.getSignature().setModification("SOLODOUV");
                     newVersions.add(received);
                 }
             }
-            LOGGER.info("New versions size = {}", newVersions.size());
+            log.info("New versions size = {}", newVersions.size());
             originalDocument.get().getVersions().addAll(newVersions);
-            LOGGER.info("New versions size = {}", originalDocument.get().getVersions().size());
+            log.info("New versions size = {}", originalDocument.get().getVersions().size());
         }
 
         Document savedDocument;
@@ -135,7 +152,7 @@ public class DocumentController {
         try{
             savedDocument = this.documentRepository.save(originalDocument.get());
         } catch (Exception e){
-            LOGGER.error("An error occurred", e);
+            log.error("An error occurred", e);
             return ResponseEntity.badRequest().body(new ErrorResponse(400, e.getMessage()));
         }
 

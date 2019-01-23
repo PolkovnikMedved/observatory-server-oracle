@@ -1,11 +1,12 @@
-package be.solodoukhin.domain;
+package be.solodoukhin.domain.persistent;
 
-import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Author: Solodoukhin Viktor
@@ -38,9 +39,7 @@ public class Structure implements Serializable {
 
     public Structure(Structure that) {
         this.name = that.getName();
-        if(that.getTag() != null) {
-            this.tag = that.getTag();
-        }
+        this.tag = that.getTag().orElse(null);
         this.description = that.getDescription();
         this.elements = new ArrayList<>();
         for(StructureElement se: that.getElements()) {
@@ -57,8 +56,8 @@ public class Structure implements Serializable {
         this.name = name;
     }
 
-    public String getTag() {
-        return tag;
+    public Optional<String> getTag() {
+        return Optional.ofNullable(tag);
     }
 
     public void setTag(String tag) {

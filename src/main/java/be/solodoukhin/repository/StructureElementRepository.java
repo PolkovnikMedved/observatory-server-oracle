@@ -1,6 +1,6 @@
 package be.solodoukhin.repository;
 
-import be.solodoukhin.domain.StructureElement;
+import be.solodoukhin.domain.persistent.StructureElement;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,7 @@
 package be.solodoukhin.controller;
 
 import be.solodoukhin.ApplicationTest;
-import be.solodoukhin.domain.tool.ProjectIdentifier;
+import be.solodoukhin.domain.api.ProjectIdentifier;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,6 +1,6 @@
-package be.solodoukhin.domain;
+package be.solodoukhin.domain.persistent;
 
-import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 
 import javax.persistence.*;
 import java.io.Serializable;

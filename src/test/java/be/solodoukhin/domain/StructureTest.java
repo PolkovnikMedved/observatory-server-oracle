@@ -1,7 +1,9 @@
 package be.solodoukhin.domain;
 
 import be.solodoukhin.ApplicationWithoutContextTest;
-import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
+import be.solodoukhin.domain.persistent.Structure;
+import be.solodoukhin.domain.persistent.StructureElement;
 import org.junit.Assert;
 import org.junit.Test;
 

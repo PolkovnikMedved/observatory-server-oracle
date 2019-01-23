@@ -1,4 +1,4 @@
-package be.solodoukhin.domain.embeddable;
+package be.solodoukhin.domain.persistent.embeddable;
 
 import be.solodoukhin.ApplicationWithoutContextTest;
 import org.junit.Assert;

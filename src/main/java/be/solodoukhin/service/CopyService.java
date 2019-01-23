@@ -1,8 +1,8 @@
 package be.solodoukhin.service;
 
-import be.solodoukhin.domain.Structure;
-import be.solodoukhin.domain.Version;
-import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import be.solodoukhin.domain.persistent.Structure;
+import be.solodoukhin.domain.persistent.Version;
+import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import org.springframework.stereotype.Service;
 
 /**

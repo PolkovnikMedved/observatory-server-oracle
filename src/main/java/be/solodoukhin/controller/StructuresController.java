@@ -1,9 +1,9 @@
 package be.solodoukhin.controller;
 
-import be.solodoukhin.domain.Structure;
-import be.solodoukhin.domain.StructureElement;
+import be.solodoukhin.domain.persistent.Structure;
+import be.solodoukhin.domain.persistent.StructureElement;
 import be.solodoukhin.domain.api.ErrorResponse;
-import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.StructureRepository;
 import be.solodoukhin.service.CopyService;
 import be.solodoukhin.service.ReorderElementsService;
@@ -125,12 +125,14 @@ public class StructuresController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody Structure s)
+    public ResponseEntity<?> update(@RequestBody Structure s) //TODO element is not removed....
     {
         LOGGER.info("Call to StructureController.update with name = {}", s.getName());
+        LOGGER.info("We have {} elements.", s.getElements().size());
         Optional<Structure> found = this.structureRepository.findById(s.getName());
         if(found.isPresent()){
-            found.get().setTag(s.getTag());
+            LOGGER.info("Found has {} elements.", found.get().getElements().size());
+            found.get().setTag(s.getTag().orElse(null));
             found.get().setDescription(s.getDescription());
             found.get().getSignature().setModifiedBy("SOLODOUV");
 
@@ -166,6 +168,7 @@ public class StructuresController {
 
             Structure saved = null;
             try{
+                LOGGER.info("Before save found has {} elements", found.get().getElements().size());
                 saved = this.structureRepository.save(found.get());
             } catch (Exception e) {
                 LOGGER.error("An error occurred", e);
