@@ -2,8 +2,8 @@ package be.solodoukhin.domain.dto;
 
 import be.solodoukhin.domain.persistent.Version;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
  * @since 2019.01.23
  */
 @Data
+@NoArgsConstructor
 public class VersionDTO implements Comparable<VersionDTO>{
     @NotNull
     @Size(min = 2, max = 20)
@@ -25,7 +26,6 @@ public class VersionDTO implements Comparable<VersionDTO>{
     @Size(min = 2, max = 767)
     private String description;
 
-    @Valid
     private StructureDTO structure;
 
     public VersionDTO(Version version) {

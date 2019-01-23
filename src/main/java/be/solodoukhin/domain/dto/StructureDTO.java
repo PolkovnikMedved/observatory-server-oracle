@@ -3,6 +3,7 @@ package be.solodoukhin.domain.dto;
 import be.solodoukhin.domain.persistent.Structure;
 import be.solodoukhin.domain.persistent.StructureElement;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -17,6 +18,7 @@ import java.util.List;
  * @since 2019.01.23
  */
 @Data
+@NoArgsConstructor
 public class StructureDTO {
     @NotNull
     @Size(min = 2, max = 80)
