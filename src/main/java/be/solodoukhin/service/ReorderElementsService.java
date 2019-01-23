@@ -1,6 +1,8 @@
 package be.solodoukhin.service;
 
+import be.solodoukhin.domain.dto.StructureDTO;
 import be.solodoukhin.domain.persistent.Structure;
+import be.solodoukhin.domain.persistent.StructureElement;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,6 +26,16 @@ public class ReorderElementsService {
     {
         for(int i = 0; i < structure.getElements().size(); i++) {
             structure.getElements().get(i).setSequence(i);
+        }
+    }
+
+    public void reorder(Structure structure, StructureDTO dto) {
+        for(int i = 0; i < dto.getElements().size(); i++) {
+            for(StructureElement element: structure.getElements()) {
+                if(dto.getElements().get(i).getId().equals(element.getId())) {
+                    element.setSequence(i);
+                }
+            }
         }
     }
 }

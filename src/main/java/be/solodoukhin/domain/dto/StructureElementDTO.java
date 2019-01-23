@@ -2,6 +2,7 @@ package be.solodoukhin.domain.dto;
 
 import be.solodoukhin.domain.persistent.StructureElement;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
@@ -15,6 +16,7 @@ import javax.validation.constraints.Size;
  * @since 2019.01.23
  */
 @Data
+@NoArgsConstructor
 public class StructureElementDTO implements Comparable<StructureElementDTO>{
     @Digits(integer = 19, fraction = 0)
     private Long id;

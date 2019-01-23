@@ -1,20 +1,22 @@
 package be.solodoukhin.controller;
 
+import be.solodoukhin.domain.api.ErrorResponse;
+import be.solodoukhin.domain.dto.StructureDTO;
 import be.solodoukhin.domain.persistent.Structure;
 import be.solodoukhin.domain.persistent.StructureElement;
-import be.solodoukhin.domain.api.ErrorResponse;
 import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.StructureRepository;
 import be.solodoukhin.service.CopyService;
 import be.solodoukhin.service.ReorderElementsService;
 import be.solodoukhin.service.StructureFilterService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import be.solodoukhin.service.converter.StructureConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,34 +27,42 @@ import java.util.Optional;
  * @since 2018.12.06
  * Description: Structure REST methods
  */
+@Slf4j
 @RestController
 @RequestMapping("/structure")
 public class StructuresController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StructuresController.class);
+    private final StructureConverter converter;
     private final StructureRepository structureRepository;
     private final StructureFilterService structureFilterService;
     private final CopyService copyService;
     private final ReorderElementsService reorderElementsService;
 
     @Autowired
-    public StructuresController(StructureRepository structureRepository, StructureFilterService structureFilterService, CopyService copyService, ReorderElementsService reorderElementsService) {
+    public StructuresController(
+            StructureRepository structureRepository,
+            StructureFilterService structureFilterService,
+            CopyService copyService,
+            ReorderElementsService reorderElementsService,
+            StructureConverter converter
+    ) {
         this.structureRepository = structureRepository;
         this.structureFilterService = structureFilterService;
         this.copyService = copyService;
         this.reorderElementsService = reorderElementsService;
+        this.converter = converter;
     }
 
     @GetMapping("/all-names")
     public List<String> getAllNames()
     {
-        LOGGER.info("Call to StructuresController.getAllNames");
+        log.info("Call to StructuresController.getAllNames");
         return this.structureRepository.getAllStructureNames();
     }
 
     @GetMapping("/is-used")
     public Boolean isUsed(@RequestParam("name") String name) {
-        LOGGER.info("Call to StructuresController.isUsed with name = {}", name);
+        log.info("Call to StructuresController.isUsed with name = {}", name);
         return this.structureRepository.isUsedAsType(name);
     }
 
@@ -66,8 +76,8 @@ public class StructuresController {
             @RequestParam(value = "page", required = false) Integer page
             )
     {
-        LOGGER.info("Call to StructuresController.getAll with page = {}", page);
-        LOGGER.info("Parameters: name={}, tag={}, description={}, createdBy={}, modifiedBy={}", name, tag, description, createdBy, modifiedBy);
+        log.info("Call to StructuresController.getAll with page = {}", page);
+        log.info("Parameters: name={}, tag={}, description={}, createdBy={}, modifiedBy={}", name, tag, description, createdBy, modifiedBy);
 
         if (page == null){
             page = 0;
@@ -84,7 +94,7 @@ public class StructuresController {
     @GetMapping("/{name}")
     public ResponseEntity<Structure> getOne(@PathVariable("name") String name)
     {
-        LOGGER.info("Call to StructuresController.getOne with name={}", name);
+        log.info("Call to StructuresController.getOne with name={}", name);
         Optional<Structure> found = this.structureRepository.findById(name);
         if(found.isPresent()){
             return ResponseEntity.ok(found.get());
@@ -96,29 +106,39 @@ public class StructuresController {
     }
 
     @PostMapping("/add")
-    public Structure add(@RequestBody Structure s)
-    {
-        LOGGER.info("Call to StructuresController.save with structure name  ={}", s.getName());
-        LOGGER.info("Call to StructuresController.save with structure tag   ={}", s.getTag());
-        LOGGER.info("Call to StructuresController.save with structure descr ={}", s.getDescription());
-        s.setSignature(new PersistenceSignature("SOLODOUV"));
-        return this.structureRepository.save(s);
+    public ResponseEntity<Structure> create(@RequestBody @Valid StructureDTO s) {
+        log.info("Call to StructuresController.create with structure name        = {}", s.getName());
+        log.info("Call to StructuresController.create with structure tag         = {}", s.getTag());
+        log.info("Call to StructuresController.create with structure description = {}", s.getDescription());
+        Structure structure = converter.toNewPersistableVersion(s);
+        structure.setSignature(new PersistenceSignature("SOLODOUV"));
+        try {
+            structure = this.structureRepository.save(structure);
+        } catch (Exception e) {
+            log.error("Could not save Structure", e);
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok(structure);
     }
 
     @PutMapping("/update-order")
-    public ResponseEntity<?> changeOrder(@RequestBody Structure s)
-    {
-        LOGGER.info("Call to StructureController.changeOrder with name ={}", s.getName());
-        this.reorderElementsService.reorder(s);
-        s.getElements().forEach(el -> el.getSignature().setModification("SOLODOUV"));
+    public ResponseEntity<Structure> changeOrder(@RequestBody @Valid StructureDTO structureDTO) {
+        log.info("Call to StructuresController.changeOrder with name = {}", structureDTO.getName());
+        Optional<Structure> structure = this.structureRepository.findById(structureDTO.getName());
+        if(!structure.isPresent()) {
+            log.warn("Could not find structure with name = '{}'", structureDTO.getName());
+            return ResponseEntity.badRequest().build();
+        }
+
+        this.reorderElementsService.reorder(structure.get(), structureDTO);
+        structure.get().getElements().forEach(el -> el.getSignature().setModification("SOLODOUV"));
         Structure savedStructure;
         try{
-            savedStructure = this.structureRepository.save(s);
-            LOGGER.info("Structure has been saved.");
-            LOGGER.info("Saved structure = {}", savedStructure);
-        } catch (Exception e) {
-            LOGGER.error("Could save reordered structure : " + s, e);
-            return ResponseEntity.badRequest().body(new ErrorResponse(400, e.getMessage()));
+            savedStructure = this.structureRepository.save(structure.get());
+        } catch ( Exception e ) {
+            log.error("Could not update structure", e);
+            return ResponseEntity.badRequest().build();
         }
 
         return ResponseEntity.ok(savedStructure);
@@ -127,23 +147,23 @@ public class StructuresController {
     @PutMapping("/update")
     public ResponseEntity<?> update(@RequestBody Structure s) //TODO element is not removed....
     {
-        LOGGER.info("Call to StructureController.update with name = {}", s.getName());
-        LOGGER.info("We have {} elements.", s.getElements().size());
+        log.info("Call to StructureController.update with name = {}", s.getName());
+        log.info("We have {} elements.", s.getElements().size());
         Optional<Structure> found = this.structureRepository.findById(s.getName());
         if(found.isPresent()){
-            LOGGER.info("Found has {} elements.", found.get().getElements().size());
+            log.info("Found has {} elements.", found.get().getElements().size());
             found.get().setTag(s.getTag().orElse(null));
             found.get().setDescription(s.getDescription());
             found.get().getSignature().setModifiedBy("SOLODOUV");
 
-            LOGGER.info("On va faire {} boucles.", s.getElements().size());
+            log.info("On va faire {} boucles.", s.getElements().size());
             int cpt = 0;
             for(StructureElement receivedElement: s.getElements()) {
-                LOGGER.info("Boucle ....");
+                log.info("Boucle ....");
                 if(receivedElement.getId() != null && receivedElement.getId() != 0L) { // Existing element
                     for(StructureElement existing: found.get().getElements()) {
                         if(existing.getId().equals(receivedElement.getId())) { // found in the original object
-                            LOGGER.info("On a trouvé notre bonheur: {}", existing.getId());
+                            log.info("On a trouvé notre bonheur: {}", existing.getId());
                             existing.setSequence(cpt);
                             existing.getSignature().setModification("SOLODOUV");
                             break;
@@ -151,7 +171,7 @@ public class StructuresController {
                     }
                 }
                 else { // new element
-                    LOGGER.info("C'est un tout nouvel élément: {}", receivedElement);
+                    log.info("C'est un tout nouvel élément: {}", receivedElement);
                     if(receivedElement.getTypeStructure() == null || receivedElement.getTypeStructure().getName() == null || receivedElement.getTypeStructure().getName().trim().equalsIgnoreCase("")){
                         receivedElement.setTypeStructure(null);
                     }
@@ -164,14 +184,14 @@ public class StructuresController {
                 cpt++;
             }
 
-            LOGGER.info("Structure to save : {}", found.get());
+            log.info("Structure to save : {}", found.get());
 
             Structure saved = null;
             try{
-                LOGGER.info("Before save found has {} elements", found.get().getElements().size());
+                log.info("Before save found has {} elements", found.get().getElements().size());
                 saved = this.structureRepository.save(found.get());
             } catch (Exception e) {
-                LOGGER.error("An error occurred", e);
+                log.error("An error occurred", e);
                 return ResponseEntity.badRequest().body(new ErrorResponse(400, e.getMessage()));
             }
 
@@ -184,40 +204,41 @@ public class StructuresController {
     }
 
     @GetMapping("/copy")
-    public ResponseEntity<?> copyStructure(@RequestParam("from") String from, @RequestParam("to") String to)
-    {
-        LOGGER.info("Call to StructuresController.copy from = '{}', to = '{}'", from, to);
+    public ResponseEntity<Structure> copyStructureNew(@RequestParam("from") String from, @RequestParam("to") String to) {
+        log.info("Call to StructuresController.copyStructure from = '{}', to = '{}'", from, to);
         Optional<Structure> fromStructure = this.structureRepository.findById(from);
-        if(fromStructure.isPresent() && to != null && !to.trim().equalsIgnoreCase("")) {
-            Structure newStructure = this.copyService.createCopyStructure(fromStructure.get(), to);
-            newStructure.setSignature(new PersistenceSignature("SOLODOUV"));
-            LOGGER.info("Copy structure = {}", newStructure);
-            Structure saved;
-            try {
-                saved = this.structureRepository.save(newStructure);
-            }
-            catch (Exception e){
-                LOGGER.error("An error occurred", e);
-                return ResponseEntity.badRequest().body(new ErrorResponse(400, e.getMessage()));
-            }
 
-            return ResponseEntity.ok(saved);
+        if(!fromStructure.isPresent() || to == null || to.trim().equalsIgnoreCase("")) {
+            log.warn("Could not create copy from structure with name = '{}', to = '{}'", from, to);
+            return ResponseEntity.badRequest().build();
         }
-        else
-        {
-            return ResponseEntity.badRequest().body(new ErrorResponse(400, "Could not find structure " + from + " or new structure name is invalid."));
+
+        Structure copy = this.copyService.createCopyStructure(fromStructure.get(), to);
+        copy.setSignature(new PersistenceSignature("SOLODOUV"));
+        copy.getElements().forEach(el -> {
+            el.setSignature(new PersistenceSignature("SOLODOUV"));
+            el.getSignature().setModification("SOLODOUV"); // Hibernate will update the children to set the foreign key
+        });
+
+        try{
+            copy = this.structureRepository.save(copy);
+        } catch (Exception e) {
+            log.error("Could not save copy structure", e);
+            return ResponseEntity.badRequest().build();
         }
+
+        return ResponseEntity.ok(copy);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> delete(@RequestParam("name") String name)
+    public ResponseEntity<Structure> delete(@RequestParam("name") String name)
     {
-        LOGGER.info("Call to StructuresController.delete with name = {}", name);
+        log.info("Call to StructuresController.delete with name = {}", name);
         try{
             this.structureRepository.deleteById(name);
         } catch (Exception e) {
-            LOGGER.error("An error occurred", e);
-            return ResponseEntity.badRequest().body(new ErrorResponse(400, e.getMessage()));
+            log.error("An error occurred", e);
+            return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
     }
