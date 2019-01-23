@@ -1,6 +1,6 @@
 package be.solodoukhin.repository;
 
-import be.solodoukhin.domain.DocumentCategory;
+import be.solodoukhin.domain.persistent.DocumentCategory;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

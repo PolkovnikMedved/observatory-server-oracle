@@ -1,9 +1,7 @@
 package be.solodoukhin.repository;
 
-import be.solodoukhin.domain.Version;
-import org.springframework.data.jpa.repository.Query;
+import be.solodoukhin.domain.persistent.Version;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**

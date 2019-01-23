@@ -1,10 +1,10 @@
 package be.solodoukhin.service;
 
 import be.solodoukhin.ApplicationWithoutContextTest;
-import be.solodoukhin.domain.Structure;
-import be.solodoukhin.domain.StructureElement;
-import be.solodoukhin.domain.Version;
-import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import be.solodoukhin.domain.persistent.Structure;
+import be.solodoukhin.domain.persistent.StructureElement;
+import be.solodoukhin.domain.persistent.Version;
+import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import org.junit.Assert;
 import org.junit.Test;
 

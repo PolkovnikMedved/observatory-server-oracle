@@ -1,8 +1,11 @@
 package be.solodoukhin.domain;
 
 import be.solodoukhin.ApplicationWithoutContextTest;
-import be.solodoukhin.domain.embeddable.Label;
-import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import be.solodoukhin.domain.persistent.embeddable.Label;
+import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
+import be.solodoukhin.domain.persistent.Document;
+import be.solodoukhin.domain.persistent.DocumentCategory;
+import be.solodoukhin.domain.persistent.Version;
 import org.junit.Assert;
 import org.junit.Test;
 

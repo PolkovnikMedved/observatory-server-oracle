@@ -1,12 +1,12 @@
 package be.solodoukhin.controller;
 
 import be.solodoukhin.ApplicationTest;
-import be.solodoukhin.domain.Document;
-import be.solodoukhin.domain.DocumentCategory;
-import be.solodoukhin.domain.Structure;
-import be.solodoukhin.domain.Version;
-import be.solodoukhin.domain.embeddable.Label;
-import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import be.solodoukhin.domain.persistent.Document;
+import be.solodoukhin.domain.persistent.DocumentCategory;
+import be.solodoukhin.domain.persistent.Structure;
+import be.solodoukhin.domain.persistent.Version;
+import be.solodoukhin.domain.persistent.embeddable.Label;
+import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.DocumentRepository;
 import be.solodoukhin.repository.VersionRepository;
 import com.fasterxml.jackson.databind.ObjectWriter;

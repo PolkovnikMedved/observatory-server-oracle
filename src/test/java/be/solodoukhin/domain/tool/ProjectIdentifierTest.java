@@ -1,6 +1,7 @@
 package be.solodoukhin.domain.tool;
 
 import be.solodoukhin.ApplicationWithoutContextTest;
+import be.solodoukhin.domain.api.ProjectIdentifier;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package be.solodoukhin.domain.embeddable;
+package be.solodoukhin.domain.persistent.embeddable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,8 +1,8 @@
 package be.solodoukhin.service;
 
 import be.solodoukhin.ApplicationWithoutContextTest;
-import be.solodoukhin.domain.Structure;
-import be.solodoukhin.domain.StructureElement;
+import be.solodoukhin.domain.persistent.Structure;
+import be.solodoukhin.domain.persistent.StructureElement;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -1,11 +1,11 @@
-package be.solodoukhin.domain.tool;
+package be.solodoukhin.domain.api;
 
 import java.io.Serializable;
 
 /**
  * Author: Solodoukhin Viktor
  * Date: 29.11.18
- * Description: class used in welcome controller ( url / sends the project identifier)
+ * Description: class used in welcome controller ( url "/" sends the project identifier)
  */
 public class ProjectIdentifier implements Serializable {
     private final String projectName;
@@ -16,11 +16,11 @@ public class ProjectIdentifier implements Serializable {
         this.projectVersion = projectVersion;
     }
 
-    String getProjectName() {
+    public String getProjectName() {
         return projectName;
     }
 
-    String getProjectVersion() {
+    public String getProjectVersion() {
         return projectVersion;
     }
 }

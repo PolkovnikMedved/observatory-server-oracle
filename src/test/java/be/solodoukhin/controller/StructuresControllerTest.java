@@ -1,9 +1,9 @@
 package be.solodoukhin.controller;
 
 import be.solodoukhin.ApplicationTest;
-import be.solodoukhin.domain.Structure;
-import be.solodoukhin.domain.StructureElement;
-import be.solodoukhin.domain.embeddable.PersistenceSignature;
+import be.solodoukhin.domain.persistent.Structure;
+import be.solodoukhin.domain.persistent.StructureElement;
+import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.StructureRepository;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.Assert;

@@ -1,4 +1,9 @@
 # Observatory server application using Oracle database
 
-## TODO
-- Refactor controllers: Remove generic wildcards and use DTO objects when receiving data
+## Technical
+In this project we use:
+- Spring Boot
+- Hibernate
+- DTO principle (received data is not persistable)
+- Lombok (Please add lombok plugin to your IDE)
+- Tests with MockMvc

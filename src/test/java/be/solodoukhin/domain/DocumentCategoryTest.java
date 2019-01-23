@@ -1,7 +1,8 @@
 package be.solodoukhin.domain;
 
 import be.solodoukhin.ApplicationWithoutContextTest;
-import be.solodoukhin.domain.embeddable.Label;
+import be.solodoukhin.domain.persistent.embeddable.Label;
+import be.solodoukhin.domain.persistent.DocumentCategory;
 import org.junit.Assert;
 import org.junit.Test;
 

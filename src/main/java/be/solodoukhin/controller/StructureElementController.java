@@ -1,6 +1,6 @@
 package be.solodoukhin.controller;
 
-import be.solodoukhin.domain.StructureElement;
+import be.solodoukhin.domain.persistent.StructureElement;
 import be.solodoukhin.domain.api.ErrorResponse;
 import be.solodoukhin.repository.StructureElementRepository;
 import be.solodoukhin.repository.StructureRepository;

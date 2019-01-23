@@ -1,6 +1,6 @@
 package be.solodoukhin.repository;
 
-import be.solodoukhin.domain.Structure;
+import be.solodoukhin.domain.persistent.Structure;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

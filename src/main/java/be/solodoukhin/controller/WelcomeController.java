@@ -1,6 +1,6 @@
 package be.solodoukhin.controller;
 
-import be.solodoukhin.domain.tool.ProjectIdentifier;
+import be.solodoukhin.domain.api.ProjectIdentifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
