@@ -6,7 +6,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Author: Solodoukhin Viktor
@@ -39,7 +38,7 @@ public class Structure implements Serializable {
 
     public Structure(Structure that) {
         this.name = that.getName();
-        this.tag = that.getTag().orElse(null);
+        this.tag = that.getTag();
         this.description = that.getDescription();
         this.elements = new ArrayList<>();
         for(StructureElement se: that.getElements()) {
@@ -56,8 +55,8 @@ public class Structure implements Serializable {
         this.name = name;
     }
 
-    public Optional<String> getTag() {
-        return Optional.ofNullable(tag);
+    public String getTag() {
+        return tag;
     }
 
     public void setTag(String tag) {

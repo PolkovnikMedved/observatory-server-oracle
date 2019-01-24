@@ -3,6 +3,7 @@ package be.solodoukhin.domain.dto;
 import be.solodoukhin.domain.persistent.Document;
 import be.solodoukhin.domain.persistent.Version;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
  * @since 2019.01.23
  */
 @Data
+@NoArgsConstructor
 public class DocumentDTO {
     private Integer number;
     private String label;

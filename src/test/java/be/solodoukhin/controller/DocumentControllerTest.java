@@ -1,6 +1,8 @@
 package be.solodoukhin.controller;
 
 import be.solodoukhin.ApplicationTest;
+import be.solodoukhin.domain.dto.DocumentDTO;
+import be.solodoukhin.domain.dto.VersionDTO;
 import be.solodoukhin.domain.persistent.Document;
 import be.solodoukhin.domain.persistent.DocumentCategory;
 import be.solodoukhin.domain.persistent.Version;
@@ -143,17 +145,17 @@ public class DocumentControllerTest extends ApplicationTest {
         Assert.assertNotNull(document.getVersions());
         Assert.assertNotEquals(0, document.getVersions().size());
 
-        Version version = new Version();
+        DocumentDTO documentDTO = new DocumentDTO(document);
+
+        VersionDTO version = new VersionDTO();
         version.setName(testVersionName + "_2");
         version.setDfaName("FOO");
         version.setDescription("BAR");
-        version.setSignature(new PersistenceSignature(testVersionName));
-        version.getSignature().setModification(testVersionName);
 
-        document.addVersion(version);
+        documentDTO.addVersion(version);
 
         ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
-        String json = writer.writeValueAsString(document);
+        String json = writer.writeValueAsString(documentDTO);
 
         mvc.perform(
                 MockMvcRequestBuilders.put("/document/update")
@@ -178,10 +180,11 @@ public class DocumentControllerTest extends ApplicationTest {
         Assert.assertNotNull(document.getVersions());
         Assert.assertNotEquals(0, document.getVersions().size());
 
-        document.getVersions().remove(0);
+        DocumentDTO documentDTO = new DocumentDTO(document);
+        documentDTO.getVersions().remove(0);
 
         ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
-        String json = writer.writeValueAsString(document);
+        String json = writer.writeValueAsString(documentDTO);
 
         mvc.perform(
                 MockMvcRequestBuilders.put("/document/update")

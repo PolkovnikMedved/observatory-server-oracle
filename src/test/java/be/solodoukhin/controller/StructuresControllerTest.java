@@ -1,6 +1,8 @@
 package be.solodoukhin.controller;
 
 import be.solodoukhin.ApplicationTest;
+import be.solodoukhin.domain.dto.StructureDTO;
+import be.solodoukhin.domain.dto.StructureElementDTO;
 import be.solodoukhin.domain.persistent.Structure;
 import be.solodoukhin.domain.persistent.StructureElement;
 import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
@@ -45,13 +47,13 @@ public class StructuresControllerTest extends ApplicationTest {
         LOGGER.info("StructuresControllerTest.test_01_createStructure()");
         Structure structure = new Structure();
         structure.setName(STRUCTURE_NAME);
-        structure.setTag("0");
-        structure.setDescription("0");
+        structure.setTag("00");
+        structure.setDescription("00");
         structure.setSignature(new PersistenceSignature(STRUCTURE_NAME));
 
         StructureElement element01 = new StructureElement();
-        element01.setTag("1");
-        element01.setDescription("1");
+        element01.setTag("11");
+        element01.setDescription("11");
         element01.setRepetitive(false);
         element01.setOptional(true);
         element01.setSequence(255);
@@ -60,8 +62,8 @@ public class StructuresControllerTest extends ApplicationTest {
         structure.addElement(element01);
 
         StructureElement element02 = new StructureElement();
-        element02.setTag("2");
-        element02.setDescription("2");
+        element02.setTag("22");
+        element02.setDescription("22");
         element02.setRepetitive(false);
         element02.setOptional(true);
         element02.setSequence(21);
@@ -80,8 +82,8 @@ public class StructuresControllerTest extends ApplicationTest {
 
         Assert.assertTrue(savedStructure.isPresent());
         Assert.assertNotNull(savedStructure.get().getElements());
-        Assert.assertEquals("0", savedStructure.get().getTag());
-        Assert.assertEquals("0", savedStructure.get().getDescription());
+        Assert.assertEquals("00", savedStructure.get().getTag());
+        Assert.assertEquals("00", savedStructure.get().getDescription());
         Assert.assertEquals(2, savedStructure.get().getElements().size());
     }
 
@@ -164,8 +166,10 @@ public class StructuresControllerTest extends ApplicationTest {
         Structure structure = this.repository.getOne(STRUCTURE_NAME);
         Assert.assertNotNull(structure);
 
+        StructureDTO dto = new StructureDTO(structure);
+
         ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
-        String json = writer.writeValueAsString(structure);
+        String json = writer.writeValueAsString(dto);
 
         mvc.perform(
                 MockMvcRequestBuilders.put("/structure/update-order")
@@ -192,8 +196,8 @@ public class StructuresControllerTest extends ApplicationTest {
         structure.setTag("99");
 
         StructureElement newElement = new StructureElement();
-        newElement.setTag("3");
-        newElement.setDescription("3");
+        newElement.setTag("33");
+        newElement.setDescription("33");
         newElement.setSequence(3);
         newElement.setOptional(false);
         newElement.setRepetitive(true);
@@ -202,8 +206,10 @@ public class StructuresControllerTest extends ApplicationTest {
 
         structure.addElement(newElement);
 
+        StructureDTO dto = new StructureDTO(structure);
+
         ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
-        String json = writer.writeValueAsString(structure);
+        String json = writer.writeValueAsString(dto);
 
         mvc.perform(
                 MockMvcRequestBuilders.put("/structure/update")
@@ -232,8 +238,10 @@ public class StructuresControllerTest extends ApplicationTest {
         structure.getElements().remove(1);
         structure.setTag("99");
 
+        StructureDTO dto = new StructureDTO(structure);
+
         ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
-        String json = writer.writeValueAsString(structure);
+        String json = writer.writeValueAsString(dto);
 
         mvc.perform(
                 MockMvcRequestBuilders.put("/structure/update")
@@ -264,8 +272,10 @@ public class StructuresControllerTest extends ApplicationTest {
         StructureElement element = structure.getElements().get(0);
         element.setTag("50");
 
+        StructureElementDTO dto = new StructureElementDTO(element);
+
         ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
-        String json = writer.writeValueAsString(element);
+        String json = writer.writeValueAsString(dto);
 
         mvc.perform(
                 MockMvcRequestBuilders.put("/structure-element/update")

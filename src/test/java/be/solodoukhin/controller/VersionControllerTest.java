@@ -1,6 +1,7 @@
 package be.solodoukhin.controller;
 
 import be.solodoukhin.ApplicationTest;
+import be.solodoukhin.domain.dto.VersionDTO;
 import be.solodoukhin.domain.persistent.Document;
 import be.solodoukhin.domain.persistent.DocumentCategory;
 import be.solodoukhin.domain.persistent.Structure;
@@ -130,9 +131,12 @@ public class VersionControllerTest extends ApplicationTest {
         Assert.assertTrue(version.isPresent());
 
         version.get().setDfaName("99");
+        version.get().setDescription("000");
+
+        VersionDTO versionDTO = new VersionDTO(version.get());
 
         ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
-        String json = writer.writeValueAsString(version.get());
+        String json = writer.writeValueAsString(versionDTO);
 
         mvc.perform(MockMvcRequestBuilders
                 .put("/version/update").contentType(MediaType.APPLICATION_JSON).content(json))

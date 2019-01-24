@@ -1,9 +1,7 @@
 package be.solodoukhin.controller;
 
-import be.solodoukhin.domain.api.ErrorResponse;
 import be.solodoukhin.domain.dto.StructureDTO;
 import be.solodoukhin.domain.persistent.Structure;
-import be.solodoukhin.domain.persistent.StructureElement;
 import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.StructureRepository;
 import be.solodoukhin.service.CopyService;
@@ -145,62 +143,26 @@ public class StructuresController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody Structure s) //TODO element is not removed....
-    {
-        log.info("Call to StructureController.update with name = {}", s.getName());
-        log.info("We have {} elements.", s.getElements().size());
-        Optional<Structure> found = this.structureRepository.findById(s.getName());
-        if(found.isPresent()){
-            log.info("Found has {} elements.", found.get().getElements().size());
-            found.get().setTag(s.getTag().orElse(null));
-            found.get().setDescription(s.getDescription());
-            found.get().getSignature().setModifiedBy("SOLODOUV");
-
-            log.info("On va faire {} boucles.", s.getElements().size());
-            int cpt = 0;
-            for(StructureElement receivedElement: s.getElements()) {
-                log.info("Boucle ....");
-                if(receivedElement.getId() != null && receivedElement.getId() != 0L) { // Existing element
-                    for(StructureElement existing: found.get().getElements()) {
-                        if(existing.getId().equals(receivedElement.getId())) { // found in the original object
-                            log.info("On a trouvé notre bonheur: {}", existing.getId());
-                            existing.setSequence(cpt);
-                            existing.getSignature().setModification("SOLODOUV");
-                            break;
-                        }
-                    }
-                }
-                else { // new element
-                    log.info("C'est un tout nouvel élément: {}", receivedElement);
-                    if(receivedElement.getTypeStructure() == null || receivedElement.getTypeStructure().getName() == null || receivedElement.getTypeStructure().getName().trim().equalsIgnoreCase("")){
-                        receivedElement.setTypeStructure(null);
-                    }
-                    receivedElement.setSignature(new PersistenceSignature("SOLODOUV"));
-                    receivedElement.setSequence(cpt);
-                    receivedElement.getSignature().setModification("SOLODOUV");
-                    found.get().getElements().add(receivedElement);
-                }
-
-                cpt++;
-            }
-
-            log.info("Structure to save : {}", found.get());
-
-            Structure saved = null;
-            try{
-                log.info("Before save found has {} elements", found.get().getElements().size());
-                saved = this.structureRepository.save(found.get());
-            } catch (Exception e) {
-                log.error("An error occurred", e);
-                return ResponseEntity.badRequest().body(new ErrorResponse(400, e.getMessage()));
-            }
-
-            return ResponseEntity.ok(saved);
+    public ResponseEntity<Structure> updateStructureAndElements(@RequestBody @Valid StructureDTO structureDTO) {
+        log.info("Call to StructureController.updateStructureAndElements with name = '{}'", structureDTO.getName());
+        log.info("We have '{}' elements in the structure.", structureDTO.getElements().size());
+        Optional<Structure> originalStructure = this.structureRepository.findById(structureDTO.getName());
+        if(!originalStructure.isPresent()) {
+            log.error("Could not find structure from DTO with name = '{}'", structureDTO.getName());
+            return ResponseEntity.badRequest().build();
         }
-        else
-        {
-            return ResponseEntity.badRequest().body(s);
+
+        this.converter.updateStructureFromDTO(originalStructure.get(), structureDTO, "SOLODOUV");
+
+        Structure saved;
+        try {
+            saved = this.structureRepository.save(originalStructure.get());
+        } catch (Exception e) {
+            log.error("Could not save updated structure with name = '{}'", structureDTO);
+            return ResponseEntity.badRequest().build();
         }
+
+        return ResponseEntity.ok(saved);
     }
 
     @GetMapping("/copy")
