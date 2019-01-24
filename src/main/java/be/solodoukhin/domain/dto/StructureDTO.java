@@ -36,7 +36,7 @@ public class StructureDTO {
 
     public StructureDTO(Structure structure) {
         this.name = structure.getName();
-        this.tag = structure.getTag().orElse(null);
+        this.tag = structure.getTag();
         this.description = structure.getDescription();
 
         for(StructureElement element: structure.getElements()) {

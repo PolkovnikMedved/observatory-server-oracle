@@ -1,10 +1,7 @@
 package be.solodoukhin.controller;
 
-import be.solodoukhin.domain.api.ErrorResponse;
 import be.solodoukhin.domain.dto.DocumentDTO;
 import be.solodoukhin.domain.persistent.Document;
-import be.solodoukhin.domain.persistent.Version;
-import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.DocumentRepository;
 import be.solodoukhin.service.DocumentFilterService;
 import be.solodoukhin.service.converter.DocumentConverter;
@@ -13,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import javax.validation.Valid;
 import java.util.Optional;
 
 /**
@@ -86,76 +81,25 @@ public class DocumentController {
 
     // Warning update document CAN NOT update DOCUMENT TABLE. It's used to do cascade operations on version.
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody Document document) {
-        log.info("Call to DocumentController.update with id = {}", document.getNumber());
-
-        Optional<Document> originalDocument = this.documentRepository.findById(document.getNumber());
+    public ResponseEntity<Document> updateVersions(@RequestBody @Valid DocumentDTO dto) {
+        log.info("Call to DocumentController.updateVersions with id = '{}'", dto.getNumber());
+        Optional<Document> originalDocument = this.documentRepository.findById(dto.getNumber());
         if(!originalDocument.isPresent()) {
-            return ResponseEntity.badRequest().body(new ErrorResponse(400, "Could not find document with id = " + document.getNumber()));
+            log.warn("Could not find Document from dto with id = '{}'", dto.getNumber());
+            return ResponseEntity.badRequest().build();
         }
 
-        // Update versions and remove
-        Iterator<Version> it = originalDocument.get().getVersions().iterator();
-        while(it.hasNext()) {
-            Version originalVersion = it.next();
-            Optional<Version> receivedVersion = document.getVersions().stream().filter(version -> version.getName().equalsIgnoreCase(originalVersion.getName())).findAny();
+        converter.updateDocumentFromDTO(originalDocument.get(), dto, "SOLODOUV");
+        originalDocument.get().getSignature().setModification("SOLODOUV");
 
-            if(receivedVersion.isPresent()) { // found version => see if we have to update the orignal one
-
-                if(originalVersion.getDfaName().isPresent() && receivedVersion.get().getDfaName().isPresent()) {
-                    log.info("Update DFA for version {}", originalVersion.getName());
-                    originalVersion.setDfaName(receivedVersion.get().getDfaName().get());
-                    originalVersion.getSignature().setModification("SOLODOUV");
-                } else if(originalVersion.getDfaName().isPresent() && (!receivedVersion.get().getDfaName().isPresent() || receivedVersion.get().getDfaName().get().trim().equalsIgnoreCase("") )) {
-                    log.info("Update DFA for version {}", originalVersion.getName());
-                    originalVersion.setDfaName(null);
-                    originalVersion.getSignature().setModification("SOLODOUV");
-                }
-
-                if(!receivedVersion.get().getDescription().equalsIgnoreCase(originalVersion.getDescription())) {
-                    log.info("Update description for version: {}", originalVersion.getName());
-                    originalVersion.setDescription(receivedVersion.get().getDescription());
-                    originalVersion.getSignature().setModification("SOLODOUV");
-                }
-
-            } else {
-                it.remove(); // the version doesn't exist in the received object => we remove it from the original one
-            }
-        }
-        // add new versions
-        if(document.getVersions().size() > originalDocument.get().getVersions().size()) {
-            log.info("Document versions {} > original versions {}", document.getVersions().size(), originalDocument.get().getVersions().size());
-            List<Version> newVersions = new ArrayList<>();
-            for(Version received: document.getVersions()) {
-                boolean found = false;
-                for(Version original : originalDocument.get().getVersions()) {
-                    if(original.getName().equalsIgnoreCase(received.getName())) {
-                        log.info("Found : {}", original.getName());
-                        found = true;
-                        break;
-                    }
-                }
-                if(!found) {
-                    log.info("Not found : {}", received.getName());
-                    received.setSignature(new PersistenceSignature("SOLODOUV"));
-                    received.getSignature().setModification("SOLODOUV");
-                    newVersions.add(received);
-                }
-            }
-            log.info("New versions size = {}", newVersions.size());
-            originalDocument.get().getVersions().addAll(newVersions);
-            log.info("New versions size = {}", originalDocument.get().getVersions().size());
-        }
-
-        Document savedDocument;
-
+        Document saved;
         try{
-            savedDocument = this.documentRepository.save(originalDocument.get());
-        } catch (Exception e){
-            log.error("An error occurred", e);
-            return ResponseEntity.badRequest().body(new ErrorResponse(400, e.getMessage()));
+            saved = this.documentRepository.save(originalDocument.get());
+        } catch (Exception e) {
+            log.error("Could not persist document after updating his versions");
+            return ResponseEntity.badRequest().build();
         }
 
-        return ResponseEntity.ok(savedDocument);
+        return ResponseEntity.ok(saved);
     }
 }
