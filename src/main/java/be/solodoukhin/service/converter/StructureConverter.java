@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -41,13 +42,13 @@ public class StructureConverter {
 
         structure.setTag(dto.getTag());
         structure.setDescription(dto.getDescription());
-        log.info("Structure updated.");
+        log.debug("Structure updated.");
 
         // Update existent
         for(StructureElementDTO elementDTO: dto.getElements()) {
             for(StructureElement element: structure.getElements()) {
                 if(elementDTO.getId() != null && elementDTO.getId().equals(element.getId())) {
-                    log.info("Update element with id = {}" + elementDTO.getId());
+                    log.debug("Update element with id = {}", elementDTO.getId());
                     element.setTag(elementDTO.getTag());
                     element.setDescription(elementDTO.getDescription());
                     element.setSequence(elementDTO.getSequence());
@@ -65,12 +66,14 @@ public class StructureConverter {
         this.removeElements(structure, dto);
 
         this.addStructureElements(structure, dto, modificationAuthor);
+
+        this.reorderElements(structure);
     }
 
     private void addStructureElements(Structure structure, StructureDTO dto, String modificationAuthor) {
         for(StructureElementDTO elementDTO: dto.getElements()) {
             if(elementDTO.getId() == null) {
-                log.info("Add element with tag = " + elementDTO.getTag());
+                log.debug("Add element with tag = " + elementDTO.getTag());
                 StructureElement structureElement = new StructureElement();
                 structureElement.setTag(elementDTO.getTag());
                 structureElement.setDescription(elementDTO.getDescription());
@@ -101,9 +104,17 @@ public class StructureConverter {
             }
 
             if(!found) {
-                log.info("Not found element with id = '{}'", element.getId());
+                log.debug("Not found element with id = '{}'", element.getId());
                 elementIterator.remove();
             }
         }
+    }
+
+    private void reorderElements(Structure structure) {
+        Collections.sort(structure.getElements());
+        for(int i = 0; i < structure.getElements().size(); i++) {
+            structure.getElements().get(i).setSequence(i);
+        }
+        log.debug("Reorder done.");
     }
 }

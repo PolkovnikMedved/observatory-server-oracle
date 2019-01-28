@@ -5,6 +5,7 @@ import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -15,7 +16,7 @@ import java.util.Optional;
 @Entity
 @Table(name = "OBS_STRUCTURE_ELEMENT2")
 @SequenceGenerator(name = "structure_element_seq", sequenceName = "structure_element_seq", allocationSize = 1)
-public class StructureElement implements Serializable {
+public class StructureElement implements Serializable, Comparable<StructureElement> {
 
     @Id
     @Column(name = "NO_ELEMENT")
@@ -137,5 +138,30 @@ public class StructureElement implements Serializable {
                 ", typeStructure=" + typeStructure +
                 ", signature=" + signature +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StructureElement element = (StructureElement) o;
+        return sequence == element.sequence &&
+                optional == element.optional &&
+                repetitive == element.repetitive &&
+                Objects.equals(id, element.id) &&
+                Objects.equals(tag, element.tag) &&
+                Objects.equals(description, element.description) &&
+                Objects.equals(typeStructure, element.typeStructure) &&
+                Objects.equals(signature, element.signature);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, tag, description, sequence, optional, repetitive, typeStructure, signature);
+    }
+
+    @Override
+    public int compareTo(StructureElement o) {
+        return Integer.compare(this.sequence, o.sequence);
     }
 }
