@@ -8,6 +8,7 @@ import be.solodoukhin.domain.persistent.StructureElement;
 import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.StructureRepository;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -29,6 +30,7 @@ import java.util.Optional;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.10
  */
+@Slf4j
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @AutoConfigureMockMvc
 public class StructuresControllerTest extends ApplicationTest {
@@ -44,7 +46,7 @@ public class StructuresControllerTest extends ApplicationTest {
 
     @Test
     public void test_01_createStructure() {
-        LOGGER.info("StructuresControllerTest.test_01_createStructure()");
+        log.info("StructuresControllerTest.test_01_createStructure()");
         Structure structure = new Structure();
         structure.setName(STRUCTURE_NAME);
         structure.setTag("00");
@@ -77,7 +79,7 @@ public class StructuresControllerTest extends ApplicationTest {
     @Test
     @Transactional
     public void test_02_ensureStructureExists() {
-        LOGGER.info("StructuresControllerTest.test_02_ensureStructureExists()");
+        log.info("StructuresControllerTest.test_02_ensureStructureExists()");
         Optional<Structure> savedStructure = this.repository.findById(STRUCTURE_NAME);
 
         Assert.assertTrue(savedStructure.isPresent());
@@ -89,7 +91,7 @@ public class StructuresControllerTest extends ApplicationTest {
 
     @Test
     public void test_03_testGetAllStructureNames() throws Exception {
-        LOGGER.info("StructuresControllerTest.test_03_testGetAllStructureNames()");
+        log.info("StructuresControllerTest.test_03_testGetAllStructureNames()");
         mvc.perform(MockMvcRequestBuilders
                 .get("/structure/all-names"))
                 .andDo(MockMvcResultHandlers.print())
@@ -100,7 +102,7 @@ public class StructuresControllerTest extends ApplicationTest {
 
     @Test
     public void test_04_testReadOneStructureEndpoint() throws Exception {
-        LOGGER.info("StructuresControllerTest.test_04_testReadOneStructureEndpoint()");
+        log.info("StructuresControllerTest.test_04_testReadOneStructureEndpoint()");
         mvc.perform(MockMvcRequestBuilders
                 .get("/structure/" + STRUCTURE_NAME))
                 .andDo(MockMvcResultHandlers.print())
@@ -113,7 +115,7 @@ public class StructuresControllerTest extends ApplicationTest {
 
     @Test
     public void test_05_testStructureIsUsed() throws Exception {
-        LOGGER.info("StructuresControllerTest.test_05_testStructureIsUsed()");
+        log.info("StructuresControllerTest.test_05_testStructureIsUsed()");
         mvc.perform(MockMvcRequestBuilders
                 .get("/structure/is-used?name=" + STRUCTURE_NAME))
                 .andDo(MockMvcResultHandlers.print())
@@ -124,7 +126,7 @@ public class StructuresControllerTest extends ApplicationTest {
 
     @Test
     public void test_06_testReadAllStructures() throws Exception {
-        LOGGER.info("StructuresControllerTest.test_06_testReadAllStructures()");
+        log.info("StructuresControllerTest.test_06_testReadAllStructures()");
         mvc.perform(MockMvcRequestBuilders.get("/structure/all"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -136,7 +138,7 @@ public class StructuresControllerTest extends ApplicationTest {
 
     @Test
     public void test_07_testReadAllStructuresFiltered() throws Exception {
-        LOGGER.info("StructuresControllerTest.test_07_testReadAllStructuresFiltered()");
+        log.info("StructuresControllerTest.test_07_testReadAllStructuresFiltered()");
         mvc.perform(MockMvcRequestBuilders.get("/structure/all?name=" + STRUCTURE_NAME))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -149,7 +151,7 @@ public class StructuresControllerTest extends ApplicationTest {
 
     @Test
     public void test_08_testCopyStructure() throws Exception {
-        LOGGER.info("StructuresControllerTest.test_08_testCopyStructure()");
+        log.info("StructuresControllerTest.test_08_testCopyStructure()");
         mvc.perform(MockMvcRequestBuilders.get("/structure/copy?from=" + STRUCTURE_NAME + "&to=" + COPY_STRUCTURE_NAME))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -162,7 +164,7 @@ public class StructuresControllerTest extends ApplicationTest {
     @Test
     @Transactional
     public void test_09_testUpdateOrder() throws Exception {
-        LOGGER.info("StructuresControllerTest.test_09_testUpdateOrder()");
+        log.info("StructuresControllerTest.test_09_testUpdateOrder()");
         Structure structure = this.repository.getOne(STRUCTURE_NAME);
         Assert.assertNotNull(structure);
 
@@ -189,7 +191,7 @@ public class StructuresControllerTest extends ApplicationTest {
     @Test
     @Transactional
     public void test_10_testAddElement() throws Exception {
-        LOGGER.info("StructuresControllerTest.test_10_testAddElement()");
+        log.info("StructuresControllerTest.test_10_testAddElement()");
         Structure structure = this.repository.getOne(STRUCTURE_NAME);
         Assert.assertNotNull(structure);
 
@@ -229,7 +231,7 @@ public class StructuresControllerTest extends ApplicationTest {
     @Test
     @Transactional
     public void test_11_testRemoveElement() throws Exception {
-        LOGGER.info("StructuresControllerTest.test_11_testRemoveElement()");
+        log.info("StructuresControllerTest.test_11_testRemoveElement()");
         Structure structure = this.repository.getOne(STRUCTURE_NAME);
         Assert.assertNotNull(structure);
         Assert.assertNotNull(structure.getElements());
@@ -263,7 +265,7 @@ public class StructuresControllerTest extends ApplicationTest {
     @Test
     @Transactional
     public void test_50_testUpdateStructureElement() throws Exception {
-        LOGGER.info("StructuresControllerTest.test_50_testUpdateStructureElement()");
+        log.info("StructuresControllerTest.test_50_testUpdateStructureElement()");
         Structure structure = this.repository.getOne(STRUCTURE_NAME);
         Assert.assertNotNull(structure);
         Assert.assertNotNull(structure.getElements());
@@ -292,7 +294,7 @@ public class StructuresControllerTest extends ApplicationTest {
 
     @Test
     public void test_99_cleanUpDatabase() {
-        LOGGER.info("StructuresControllerTest.test_99_cleanUpDatabase()");
+        log.info("StructuresControllerTest.test_99_cleanUpDatabase()");
         this.repository.deleteById(STRUCTURE_NAME);
         this.repository.deleteById(COPY_STRUCTURE_NAME);
 

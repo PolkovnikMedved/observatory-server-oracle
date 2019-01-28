@@ -6,11 +6,11 @@ import be.solodoukhin.domain.persistent.Structure;
 import be.solodoukhin.domain.persistent.StructureElement;
 import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.StructureRepository;
+import be.solodoukhin.service.ReorderElementsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Iterator;
 
 /**
@@ -23,10 +23,12 @@ import java.util.Iterator;
 @Service
 public class StructureConverter {
 
+    private final ReorderElementsService reorderElementsService;
     private final StructureRepository structureRepository;
 
     @Autowired
-    public StructureConverter(StructureRepository structureRepository) {
+    public StructureConverter(ReorderElementsService reorderElementsService, StructureRepository structureRepository) {
+        this.reorderElementsService = reorderElementsService;
         this.structureRepository = structureRepository;
     }
 
@@ -66,8 +68,7 @@ public class StructureConverter {
         this.removeElements(structure, dto);
 
         this.addStructureElements(structure, dto, modificationAuthor);
-
-        this.reorderElements(structure);
+        this.reorderElementsService.reorderWithNullIdentifiers(structure);
     }
 
     private void addStructureElements(Structure structure, StructureDTO dto, String modificationAuthor) {
@@ -108,13 +109,5 @@ public class StructureConverter {
                 elementIterator.remove();
             }
         }
-    }
-
-    private void reorderElements(Structure structure) {
-        Collections.sort(structure.getElements());
-        for(int i = 0; i < structure.getElements().size(); i++) {
-            structure.getElements().get(i).setSequence(i);
-        }
-        log.debug("Reorder done.");
     }
 }

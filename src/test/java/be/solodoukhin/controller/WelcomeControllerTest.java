@@ -2,6 +2,7 @@ package be.solodoukhin.controller;
 
 import be.solodoukhin.ApplicationTest;
 import be.solodoukhin.domain.api.ProjectIdentifier;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.10
  */
+@Slf4j
 @AutoConfigureMockMvc
 public class WelcomeControllerTest extends ApplicationTest {
 
@@ -31,7 +33,7 @@ public class WelcomeControllerTest extends ApplicationTest {
 
     @Test
     public void testWelcome() throws Exception {
-        LOGGER.info("WelcomeControllerTest.testWelcome()");
+        log.info("WelcomeControllerTest.testWelcome()");
         ProjectIdentifier pi = new ProjectIdentifier(this.projectName, this.projectVersion);
 
         this.mvc.perform(MockMvcRequestBuilders.get("/"))

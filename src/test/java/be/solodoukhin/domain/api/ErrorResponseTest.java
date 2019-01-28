@@ -1,6 +1,7 @@
 package be.solodoukhin.domain.api;
 
 import be.solodoukhin.ApplicationWithoutContextTest;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,18 +11,19 @@ import org.junit.Test;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
+@Slf4j
 public class ErrorResponseTest extends ApplicationWithoutContextTest {
 
     @Test
     public void testConstructor() {
-        LOGGER.info("ErrorResponseTest.testConstructor()");
+        log.info("ErrorResponseTest.testConstructor()");
         ErrorResponse response = new ErrorResponse(400, "Aretez de taper n'importe quoi dans notre application géniale !");
         Assert.assertNotNull(response);
     }
 
     @Test
     public void testFields() {
-        LOGGER.info("ErrorResponseTest.testConstructor()");
+        log.info("ErrorResponseTest.testConstructor()");
         ErrorResponse response = new ErrorResponse(200, "Welcome brother.");
 
         Assert.assertNotNull(response);

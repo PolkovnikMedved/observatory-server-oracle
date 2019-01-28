@@ -1,6 +1,7 @@
 package be.solodoukhin.domain.persistent.embeddable;
 
 import be.solodoukhin.ApplicationWithoutContextTest;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -12,6 +13,7 @@ import java.time.LocalDate;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
+@Slf4j
 public class PersistenceSignatureTest extends ApplicationWithoutContextTest {
 
     private static final String AUTHOR = "SOLODOUV";
@@ -19,7 +21,7 @@ public class PersistenceSignatureTest extends ApplicationWithoutContextTest {
 
     @Test
     public void testConstructor() {
-        LOGGER.info("PersistenceSignatureTest.testConstructor()");
+        log.info("PersistenceSignatureTest.testConstructor()");
         PersistenceSignature signature = new PersistenceSignature();
         Assert.assertNotNull(signature);
 
@@ -29,7 +31,7 @@ public class PersistenceSignatureTest extends ApplicationWithoutContextTest {
 
     @Test
     public void testFields() {
-        LOGGER.info("PersistenceSignatureTest.testFields()");
+        log.info("PersistenceSignatureTest.testFields()");
         PersistenceSignature signature = new PersistenceSignature();
         signature.setCreatedBy(AUTHOR);
         signature.setCreatedAt(DATE);
@@ -45,7 +47,7 @@ public class PersistenceSignatureTest extends ApplicationWithoutContextTest {
 
     @Test
     public void testModification() {
-        LOGGER.info("PersistenceSignatureTest.testModification()");
+        log.info("PersistenceSignatureTest.testModification()");
         PersistenceSignature signature = new PersistenceSignature(AUTHOR);
         Assert.assertNotNull(signature);
         signature.setModification(AUTHOR);
