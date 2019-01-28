@@ -11,6 +11,7 @@ import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.DocumentRepository;
 import be.solodoukhin.repository.VersionRepository;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -32,6 +33,7 @@ import java.util.Optional;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.10
  */
+@Slf4j
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @AutoConfigureMockMvc
 public class VersionControllerTest extends ApplicationTest {
@@ -53,7 +55,7 @@ public class VersionControllerTest extends ApplicationTest {
 
     @Test
     public void test_00_createVersion() {
-        LOGGER.info("VersionControllerTest.test_00_createVersion()");
+        log.info("VersionControllerTest.test_00_createVersion()");
         Document document = new Document();
         document.setNumber(TEST_DOCUMENT_NUMBER);
         document.setMandatoryFlag(0);
@@ -89,13 +91,13 @@ public class VersionControllerTest extends ApplicationTest {
 
     @Test
     public void test_01_readOneVersion() {
-        LOGGER.info("VersionControllerTest.test_01_readOneVersion()");
+        log.info("VersionControllerTest.test_01_readOneVersion()");
         Assert.assertTrue(this.versionRepository.existsById(TEST_VERSION_NAME));
     }
 
     @Test
     public void test_02_testGetOneEndpoint() throws Exception {
-        LOGGER.info("VersionControllerTest.test_02_testGetOneEndpoint()");
+        log.info("VersionControllerTest.test_02_testGetOneEndpoint()");
         mvc.perform(MockMvcRequestBuilders
                 .get("/version/" + TEST_VERSION_NAME))
                 .andDo(MockMvcResultHandlers.print())
@@ -108,7 +110,7 @@ public class VersionControllerTest extends ApplicationTest {
     @Transactional
     public void test_03_testCopyVersion() throws Exception
     {
-        LOGGER.info("VersionControllerTest.test_03_testCopyVersion()");
+        log.info("VersionControllerTest.test_03_testCopyVersion()");
         Optional<Version> version = this.versionRepository.findById(TEST_VERSION_NAME);
         Assert.assertTrue(version.isPresent());
 
@@ -126,7 +128,7 @@ public class VersionControllerTest extends ApplicationTest {
     @Transactional
     public void test_04_testUpdateVersion() throws Exception
     {
-        LOGGER.info("VersionControllerTest.test_04_testUpdateVersion()");
+        log.info("VersionControllerTest.test_04_testUpdateVersion()");
         Optional<Version> version = this.versionRepository.findById(TEST_VERSION_NAME);
         Assert.assertTrue(version.isPresent());
 
@@ -150,7 +152,7 @@ public class VersionControllerTest extends ApplicationTest {
 
     @Test
     public void test_99_cleanUpDatabase() {
-        LOGGER.info("VersionControllerTest.test_99_cleanUpDatabase()");
+        log.info("VersionControllerTest.test_99_cleanUpDatabase()");
         this.documentRepository.deleteById(TEST_DOCUMENT_NUMBER);
 
         Assert.assertFalse(this.documentRepository.existsById(TEST_DOCUMENT_NUMBER));

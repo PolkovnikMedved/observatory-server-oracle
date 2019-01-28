@@ -5,12 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -22,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.10
  */
+@Slf4j
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @SpringBootTest
 @ActiveProfiles("test")
@@ -29,14 +29,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 @TestPropertySource(locations = "classpath:application-test.properties")
 public abstract class ApplicationTest {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ApplicationTest.class);
-
     protected static ObjectMapper mapper;
 
     @BeforeClass
     public static void test_setUpTNS() {
         TnsAdmin.init();
-        LOGGER.info("TNS : " + System.getProperty("oracle.net.tns_admin"));
+        log.info("TNS : " + System.getProperty("oracle.net.tns_admin"));
     }
 
     @BeforeClass

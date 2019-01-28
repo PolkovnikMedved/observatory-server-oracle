@@ -4,6 +4,7 @@ import be.solodoukhin.ApplicationWithoutContextTest;
 import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import be.solodoukhin.domain.persistent.Structure;
 import be.solodoukhin.domain.persistent.StructureElement;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,18 +14,19 @@ import org.junit.Test;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
+@Slf4j
 public class StructureElementTest extends ApplicationWithoutContextTest {
 
     @Test
     public void testConstructor() {
-        LOGGER.info("StructureElementTest.testConstructor()");
+        log.info("StructureElementTest.testConstructor()");
         StructureElement structureElement = new StructureElement();
         Assert.assertNotNull(structureElement);
     }
 
     @Test
     public void testFields() {
-        LOGGER.info("StructureElementTest.testFields()");
+        log.info("StructureElementTest.testFields()");
         StructureElement structureElement = new StructureElement();
         structureElement.setId(525L);
         structureElement.setTag("0");
@@ -49,7 +51,7 @@ public class StructureElementTest extends ApplicationWithoutContextTest {
 
     @Test
     public void testCopyConstructor() {
-        LOGGER.info("StructureElementTest.testCopyConstructor()");
+        log.info("StructureElementTest.testCopyConstructor()");
         Structure type = new Structure();
         type.setName("TYPE");
 

@@ -5,6 +5,8 @@ import be.solodoukhin.domain.persistent.Structure;
 import be.solodoukhin.domain.persistent.StructureElement;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+
 /**
  * Brief description here....
  *
@@ -16,19 +18,14 @@ import org.springframework.stereotype.Service;
 public class ReorderElementsService {
 
     /**
-     * When calling this method, we will reindex the "sequence" field of
-     * each structure element of the given structure. The sequence field will
-     * receive the position of the element in the structure.elements list.
+     * We call this method to reorder sequence field of Structure object.
+     * We use this method with a StructureDTO object received from the user
      *
-     * @param structure Lambda structure
+     * Warning: The identifiers could not be null.
+     *
+     * @param structure Structure. If elements.size != 0 then each element.id can't be null
+     * @param dto StructureDTO. If elements.size != null then each element.id can't be null
      */
-    public void reorder(Structure structure)
-    {
-        for(int i = 0; i < structure.getElements().size(); i++) {
-            structure.getElements().get(i).setSequence(i);
-        }
-    }
-
     public void reorder(Structure structure, StructureDTO dto) {
         for(int i = 0; i < dto.getElements().size(); i++) {
             for(StructureElement element: structure.getElements()) {
@@ -36,6 +33,13 @@ public class ReorderElementsService {
                     element.setSequence(i);
                 }
             }
+        }
+    }
+
+    public void reorderWithNullIdentifiers(Structure structure) {
+        Collections.sort(structure.getElements());
+        for(int i = 0; i < structure.getElements().size(); i++) {
+            structure.getElements().get(i).setSequence(i);
         }
     }
 }

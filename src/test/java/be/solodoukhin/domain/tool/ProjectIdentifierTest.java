@@ -2,6 +2,7 @@ package be.solodoukhin.domain.tool;
 
 import be.solodoukhin.ApplicationWithoutContextTest;
 import be.solodoukhin.domain.api.ProjectIdentifier;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,6 +12,7 @@ import org.junit.Test;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
+@Slf4j
 public class ProjectIdentifierTest extends ApplicationWithoutContextTest {
 
     private static final String PROJECT_NAME = "observatory-server";
@@ -18,7 +20,7 @@ public class ProjectIdentifierTest extends ApplicationWithoutContextTest {
 
     @Test
     public void testConstructor() {
-        LOGGER.info("ProjectIdentifierTest.testConstructor()");
+        log.info("ProjectIdentifierTest.testConstructor()");
         ProjectIdentifier projectIdentifier = new ProjectIdentifier(PROJECT_NAME, PROJECT_VERSION);
         Assert.assertNotNull(projectIdentifier);
         Assert.assertEquals(PROJECT_NAME, projectIdentifier.getProjectName());

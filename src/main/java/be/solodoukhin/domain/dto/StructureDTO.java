@@ -32,7 +32,7 @@ public class StructureDTO {
     private String description;
 
     @Valid
-    private List<StructureElementDTO> elements;
+    private List<StructureElementDTO> elements = new ArrayList<>();
 
     public StructureDTO(Structure structure) {
         this.name = structure.getName();

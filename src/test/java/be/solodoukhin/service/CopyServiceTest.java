@@ -5,6 +5,7 @@ import be.solodoukhin.domain.persistent.Structure;
 import be.solodoukhin.domain.persistent.StructureElement;
 import be.solodoukhin.domain.persistent.Version;
 import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
+@Slf4j
 public class CopyServiceTest extends ApplicationWithoutContextTest {
 
     private static final String VERSION_TEST_NAME = "UNIT_TEST";
@@ -26,7 +28,7 @@ public class CopyServiceTest extends ApplicationWithoutContextTest {
     @Test
     public void testDeepVersionCopy()
     {
-        LOGGER.info("CopyServiceTest.testDeepVersionCopy()");
+        log.info("CopyServiceTest.testDeepVersionCopy()");
         Version version = new Version();
         version.setName(VERSION_TEST_NAME);
         version.setDfaName("0");
@@ -46,7 +48,7 @@ public class CopyServiceTest extends ApplicationWithoutContextTest {
 
     @Test
     public void testDeepStructureCopy() {
-        LOGGER.info("CopyServiceTest.testDeepStructureCopy()");
+        log.info("CopyServiceTest.testDeepStructureCopy()");
         Structure structure = new Structure();
         StructureElement element = new StructureElement();
 

@@ -1,11 +1,12 @@
 package be.solodoukhin.domain;
 
 import be.solodoukhin.ApplicationWithoutContextTest;
-import be.solodoukhin.domain.persistent.embeddable.Label;
-import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import be.solodoukhin.domain.persistent.Document;
 import be.solodoukhin.domain.persistent.DocumentCategory;
 import be.solodoukhin.domain.persistent.Version;
+import be.solodoukhin.domain.persistent.embeddable.Label;
+import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -17,18 +18,19 @@ import java.util.ArrayList;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
+@Slf4j
 public class DocumentTest extends ApplicationWithoutContextTest {
 
     @Test
     public void testConstructor() {
-        LOGGER.info("DocumentTest.testConstructor()");
+        log.info("DocumentTest.testConstructor()");
         Document document = new Document();
         Assert.assertNotNull(document);
     }
 
     @Test
     public void testFields() {
-        LOGGER.info("DocumentTest.testFields()");
+        log.info("DocumentTest.testFields()");
         Document document = new Document();
         Version version = new Version();
 

@@ -10,6 +10,7 @@ import be.solodoukhin.domain.persistent.embeddable.Label;
 import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
 import be.solodoukhin.repository.DocumentRepository;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.10
  */
+@Slf4j
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @AutoConfigureMockMvc
 public class DocumentControllerTest extends ApplicationTest {
@@ -46,7 +48,7 @@ public class DocumentControllerTest extends ApplicationTest {
 
     @Test
     public void test_00_createTestDocument() {
-        LOGGER.info("DocumentControllerTest.test_00_createTestDocument()");
+        log.info("DocumentControllerTest.test_00_createTestDocument()");
         Document document = new Document();
         document.setNumber(this.testDocumentNumber);
         document.setMandatoryFlag(0);
@@ -74,7 +76,7 @@ public class DocumentControllerTest extends ApplicationTest {
     @Test
     @Transactional
     public void test_01_readCreatedDocument() {
-        LOGGER.info("DocumentControllerTest.test_01_readCreatedDocument()");
+        log.info("DocumentControllerTest.test_01_readCreatedDocument()");
         Document savedDocument = this.documentRepository.getOne(this.testDocumentNumber);
 
         Assert.assertNotNull(savedDocument);
@@ -87,7 +89,7 @@ public class DocumentControllerTest extends ApplicationTest {
 
     @Test
     public void test_03_testGetDocumentEndpoint() throws Exception {
-        LOGGER.info("DocumentControllerTest.test_03_testGetDocumentEndpoint()");
+        log.info("DocumentControllerTest.test_03_testGetDocumentEndpoint()");
         mvc.perform(MockMvcRequestBuilders
                 .get("/document/" + this.testDocumentNumber))
                 .andDo(MockMvcResultHandlers.print())
@@ -98,7 +100,7 @@ public class DocumentControllerTest extends ApplicationTest {
 
     @Test
     public void test_04_testGetAll() throws Exception {
-        LOGGER.info("DocumentControllerTest.test_04_testGetAll()");
+        log.info("DocumentControllerTest.test_04_testGetAll()");
         mvc.perform(MockMvcRequestBuilders.get("/document/all"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -110,7 +112,7 @@ public class DocumentControllerTest extends ApplicationTest {
 
     @Test
     public void test_05_testSearchDocumentNumber() throws Exception {
-        LOGGER.info("DocumentControllerTest.test_05_testSearchDocumentNumber()");
+        log.info("DocumentControllerTest.test_05_testSearchDocumentNumber()");
         mvc.perform(MockMvcRequestBuilders.get("/document/all?documentNumber=" + this.testDocumentNumber))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -124,7 +126,7 @@ public class DocumentControllerTest extends ApplicationTest {
     @Test
     public void test_05_testSearchDocumentName() throws Exception
     {
-        LOGGER.info("DocumentControllerTest.test_05_testSearchDocumentName()");
+        log.info("DocumentControllerTest.test_05_testSearchDocumentName()");
         mvc.perform(MockMvcRequestBuilders.get("/document/all?documentName="  + this.testDocumentFrenchLabel))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -139,7 +141,7 @@ public class DocumentControllerTest extends ApplicationTest {
     @Transactional
     public void test_06_addVersion() throws Exception
     {
-        LOGGER.info("DocumentControllerTest.test_06_addVersion()");
+        log.info("DocumentControllerTest.test_06_addVersion()");
         Document document = this.documentRepository.getOne(testDocumentNumber);
         Assert.assertNotNull(document);
         Assert.assertNotNull(document.getVersions());
@@ -174,7 +176,7 @@ public class DocumentControllerTest extends ApplicationTest {
     @Test
     @Transactional
     public void test_07_removeVersion() throws Exception {
-        LOGGER.info("DocumentControllerTest.test_07_removeVersion()");
+        log.info("DocumentControllerTest.test_07_removeVersion()");
         Document document = this.documentRepository.getOne(testDocumentNumber);
         Assert.assertNotNull(document);
         Assert.assertNotNull(document.getVersions());
@@ -201,7 +203,7 @@ public class DocumentControllerTest extends ApplicationTest {
 
     @Test
     public void test_99_cleanDatabase() {
-        LOGGER.info("DocumentControllerTest.test_99_cleanDatabase()");
+        log.info("DocumentControllerTest.test_99_cleanDatabase()");
         this.documentRepository.deleteById(this.testDocumentNumber);
 
         Assert.assertFalse(this.documentRepository.findById(this.testDocumentNumber).isPresent());

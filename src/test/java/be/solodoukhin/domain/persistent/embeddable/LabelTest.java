@@ -1,6 +1,7 @@
 package be.solodoukhin.domain.persistent.embeddable;
 
 import be.solodoukhin.ApplicationWithoutContextTest;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -10,11 +11,12 @@ import org.junit.Test;
  * @author viktor.solodoukhin@groups.be
  * @since 2019.01.09
  */
+@Slf4j
 public class LabelTest extends ApplicationWithoutContextTest {
 
     @Test
     public void testConstructor() {
-        LOGGER.info("LabelTest.testConstructor()");
+        log.info("LabelTest.testConstructor()");
         Label label = new Label();
         Assert.assertNotNull(label);
     }
