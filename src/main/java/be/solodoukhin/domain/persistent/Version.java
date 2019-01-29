@@ -18,10 +18,10 @@ public class Version implements Serializable {
     @Column(name = "NO_VERSION")
     private String name;
 
-    @Column(name = "NO_DFA")
+    @Column(name = "NO_DFA", length = 20)
     private String dfaName;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 767, nullable = false)
     private String description;
 
     @ManyToOne(cascade = { CascadeType.ALL })

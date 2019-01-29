@@ -21,11 +21,11 @@ public class StructureElementDTO implements Comparable<StructureElementDTO>{
     @Digits(integer = 19, fraction = 0)
     private Long id;
 
-    @Size(min = 2, max = 80)
+    @Size(max = 80)
     private String tag;
 
     @NotNull
-    @Size(min = 2, max = 767)
+    @Size(max = 767)
     private String description;
 
     @Digits(integer = 5, fraction = 0)

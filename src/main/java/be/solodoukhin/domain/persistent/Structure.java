@@ -17,13 +17,13 @@ import java.util.List;
 public class Structure implements Serializable {
 
     @Id
-    @Column(name = "NOM_STRUCTURE")
+    @Column(name = "NOM_STRUCTURE", length = 80, nullable = false)
     private String name;
 
-    @Column(name = "TAG")
+    @Column(name = "TAG", length = 80)
     private String tag;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 767, nullable = false)
     private String description;
 
     @OrderBy("sequence ASC")
