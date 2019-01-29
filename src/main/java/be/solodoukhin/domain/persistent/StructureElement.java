@@ -23,10 +23,10 @@ public class StructureElement implements Serializable, Comparable<StructureEleme
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "structure_element_seq")
     private Long id;
 
-    @Column(name = "TAG")
+    @Column(name = "TAG", length = 80)
     private String tag;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 767, nullable = false)
     private String description;
 
     @Column(name = "SUITE")

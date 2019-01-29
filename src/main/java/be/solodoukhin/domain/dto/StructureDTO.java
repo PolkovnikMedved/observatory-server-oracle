@@ -24,7 +24,7 @@ public class StructureDTO {
     @Size(min = 2, max = 80)
     private String name;
 
-    @Size(min = 2, max = 80)
+    @Size(max = 80)
     private String tag;
 
     @NotNull

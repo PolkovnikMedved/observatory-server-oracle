@@ -23,6 +23,7 @@ public class VersionDTO implements Comparable<VersionDTO>{
     @Size(max = 20)
     private String dfaName;
 
+    @NotNull
     @Size(min = 2, max = 767)
     private String description;
 
