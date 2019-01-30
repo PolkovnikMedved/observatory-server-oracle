@@ -3,6 +3,7 @@ package be.solodoukhin.controller;
 import be.solodoukhin.domain.dto.StructureDTO;
 import be.solodoukhin.domain.persistent.Structure;
 import be.solodoukhin.domain.persistent.embeddable.PersistenceSignature;
+import be.solodoukhin.domain.xml.StructureWrapper;
 import be.solodoukhin.repository.StructureRepository;
 import be.solodoukhin.service.CopyService;
 import be.solodoukhin.service.ReorderElementsService;
@@ -11,6 +12,7 @@ import be.solodoukhin.service.converter.StructureConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -190,6 +192,22 @@ public class StructuresController {
         }
 
         return ResponseEntity.ok(copy);
+    }
+
+    @GetMapping(value = "/xml", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<StructureWrapper> getStructureXml(@RequestParam("name") String structureName, @RequestParam("empty") boolean empty) {
+        log.info("Call to StructuresController.getStructureXml");
+        Optional<Structure> structure = this.structureRepository.findById(structureName);
+
+        if(!structure.isPresent()){
+            log.error("Could not find structure with name = '{}'", structureName);
+            return ResponseEntity.badRequest().build();
+        }
+
+        StructureWrapper wrapper = new StructureWrapper(structure.get(), empty);
+        log.info("Wrapper = " + wrapper);
+
+        return ResponseEntity.ok(wrapper);
     }
 
     @DeleteMapping("/delete")
