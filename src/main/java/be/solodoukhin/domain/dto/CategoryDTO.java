@@ -1,5 +1,6 @@
 package be.solodoukhin.domain.dto;
 
+import be.solodoukhin.domain.persistent.embeddable.Label;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,5 +14,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class CategoryDTO {
     private Integer number;
-    private String label;
+    private Label label;
 }
