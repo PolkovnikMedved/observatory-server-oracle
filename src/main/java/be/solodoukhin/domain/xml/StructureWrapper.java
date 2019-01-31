@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class StructureWrapper implements Serializable {
 
     @XmlElement(name = "CLEFS", required = true)
-    private XmlKeys keys = new XmlKeys();
+    private XmlKeys keys;
 
     @XmlElement(name = "CONTENU", required = true)
     private StructureXml structure;
@@ -26,6 +26,7 @@ public class StructureWrapper implements Serializable {
     public StructureWrapper() {}
 
     public StructureWrapper(Structure structure, boolean empty) {
+        this.keys = new XmlKeys(empty);
         this.structure = new StructureXml(structure, empty);
     }
 

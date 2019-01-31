@@ -49,10 +49,13 @@ public class StructureXml implements Serializable {
                 }
             } else {
                 String structureTag;
-                if(node.getType().getTag() != null) {
-                    structureTag = node.getType().getTag();
-                } else {
+                if(node.getTag() != null && !node.getTag().isEmpty()) {
+                    structureTag = node.getTag();
+                }
+                else if(node.getType().getName() != null) {
                     structureTag = node.getType().getName();
+                } else {
+                    structureTag = "ERROR_TAG";
                 }
                 nodes.add(new JAXBElement<>(new QName(structureTag), StructureXml.class, node.getType()));
             }
