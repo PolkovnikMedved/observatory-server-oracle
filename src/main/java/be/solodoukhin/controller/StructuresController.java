@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RestController
-@RequestMapping("/structure")
+@RequestMapping(RoutingMapping.PROTECTED_URL_STRUCTURE)
 public class StructuresController {
 
     private final StructureConverter converter;
@@ -106,12 +107,12 @@ public class StructuresController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Structure> create(@RequestBody @Valid StructureDTO s) {
+    public ResponseEntity<Structure> create(@RequestBody @Valid StructureDTO s, Principal principal) {
         log.info("Call to StructuresController.create with structure name        = {}", s.getName());
         log.info("Call to StructuresController.create with structure tag         = {}", s.getTag());
         log.info("Call to StructuresController.create with structure description = {}", s.getDescription());
         Structure structure = converter.toNewPersistableVersion(s);
-        structure.setSignature(new PersistenceSignature("SOLODOUV"));
+        structure.setSignature(new PersistenceSignature(principal.getName()));
         try {
             structure = this.structureRepository.save(structure);
         } catch (Exception e) {
@@ -123,7 +124,7 @@ public class StructuresController {
     }
 
     @PutMapping("/update-order")
-    public ResponseEntity<Structure> changeOrder(@RequestBody @Valid StructureDTO structureDTO) {
+    public ResponseEntity<Structure> changeOrder(@RequestBody @Valid StructureDTO structureDTO, Principal principal) {
         log.info("Call to StructuresController.changeOrder with name = {}", structureDTO.getName());
         Optional<Structure> structure = this.structureRepository.findById(structureDTO.getName());
         if(!structure.isPresent()) {
@@ -132,7 +133,7 @@ public class StructuresController {
         }
 
         this.reorderElementsService.reorder(structure.get(), structureDTO);
-        structure.get().getElements().forEach(el -> el.getSignature().setModification("SOLODOUV"));
+        structure.get().getElements().forEach(el -> el.getSignature().setModification(principal.getName()));
         Structure savedStructure;
         try{
             savedStructure = this.structureRepository.save(structure.get());
@@ -145,7 +146,7 @@ public class StructuresController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Structure> updateStructureAndElements(@RequestBody @Valid StructureDTO structureDTO) {
+    public ResponseEntity<Structure> updateStructureAndElements(@RequestBody @Valid StructureDTO structureDTO, Principal principal) {
         log.info("Call to StructureController.updateStructureAndElements with name = '{}'", structureDTO.getName());
         log.info("We have '{}' elements in the structure.", structureDTO.getElements().size());
         Optional<Structure> originalStructure = this.structureRepository.findById(structureDTO.getName());
@@ -154,7 +155,7 @@ public class StructuresController {
             return ResponseEntity.badRequest().build();
         }
 
-        this.converter.updateStructureFromDTO(originalStructure.get(), structureDTO, "SOLODOUV");
+        this.converter.updateStructureFromDTO(originalStructure.get(), structureDTO, principal.getName());
 
         Structure saved;
         try {
@@ -168,7 +169,7 @@ public class StructuresController {
     }
 
     @GetMapping("/copy")
-    public ResponseEntity<Structure> copyStructureNew(@RequestParam("from") String from, @RequestParam("to") String to) {
+    public ResponseEntity<Structure> copyStructureNew(@RequestParam("from") String from, @RequestParam("to") String to, Principal principal) {
         log.info("Call to StructuresController.copyStructure from = '{}', to = '{}'", from, to);
         Optional<Structure> fromStructure = this.structureRepository.findById(from);
 
@@ -178,10 +179,10 @@ public class StructuresController {
         }
 
         Structure copy = this.copyService.createCopyStructure(fromStructure.get(), to);
-        copy.setSignature(new PersistenceSignature("SOLODOUV"));
+        copy.setSignature(new PersistenceSignature(principal.getName()));
         copy.getElements().forEach(el -> {
-            el.setSignature(new PersistenceSignature("SOLODOUV"));
-            el.getSignature().setModification("SOLODOUV"); // Hibernate will update the children to set the foreign key
+            el.setSignature(new PersistenceSignature(principal.getName()));
+            el.getSignature().setModification(principal.getName()); // Hibernate will update the children to set the foreign key
         });
 
         try{

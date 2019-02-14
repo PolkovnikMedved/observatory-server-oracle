@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.Optional;
 
 /**
@@ -20,7 +21,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RestController
-@RequestMapping("/document")
+@RequestMapping(RoutingMapping.PROTECTED_URL_DOCUMENT)
 public class DocumentController {
 
     private final DocumentFilterService documentFilterService;
@@ -61,6 +62,7 @@ public class DocumentController {
     @GetMapping("/{id}")
     public ResponseEntity<DocumentDTO> getOneDTO(@PathVariable("id") Integer id) {
         log.info("Call to getOneDTO with id = '{}'", id);
+
         Optional<Document> document = this.documentRepository.findById(id);
 
         if(!document.isPresent()) {
@@ -79,9 +81,9 @@ public class DocumentController {
         return ResponseEntity.ok(response);
     }
 
-    // Warning update document CAN NOT update DOCUMENT TABLE. It's used to do cascade operations on version.
+    // Warning update document SHOULD NOT update DOCUMENT TABLE. It's used to do cascade operations on version.
     @PutMapping("/update")
-    public ResponseEntity<Document> updateVersions(@RequestBody @Valid DocumentDTO dto) {
+    public ResponseEntity<Document> updateVersions(@RequestBody @Valid DocumentDTO dto, Principal principal) {
         log.info("Call to DocumentController.updateVersions with id = '{}'", dto.getNumber());
         Optional<Document> originalDocument = this.documentRepository.findById(dto.getNumber());
         if(!originalDocument.isPresent()) {
@@ -89,8 +91,8 @@ public class DocumentController {
             return ResponseEntity.badRequest().build();
         }
 
-        converter.updateDocumentFromDTO(originalDocument.get(), dto, "SOLODOUV");
-        originalDocument.get().getSignature().setModification("SOLODOUV");
+        converter.updateDocumentFromDTO(originalDocument.get(), dto, principal.getName());
+        originalDocument.get().getSignature().setModification(principal.getName());
 
         Document saved;
         try{
