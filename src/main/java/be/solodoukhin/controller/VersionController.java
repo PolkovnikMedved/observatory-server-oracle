@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.Optional;
 
 /**
@@ -24,7 +25,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RestController
-@RequestMapping("/version")
+@RequestMapping(RoutingMapping.PROTECTED_URL_VERSION)
 public class VersionController {
     private final VersionConverter converter;
     private final VersionRepository versionRepository;
@@ -79,7 +80,7 @@ public class VersionController {
     }
 
     @GetMapping("/copy")
-    public ResponseEntity<Document> copyVersion(@RequestParam("from") String from, @RequestParam("to") String to)
+    public ResponseEntity<Document> copyVersion(@RequestParam("from") String from, @RequestParam("to") String to, Principal principal)
     {
         log.info("Call to VersionController.copyVersion from = '{}' to '{}'", from, to);
         // Get the document that contains the version (version has no link to the document)
@@ -92,8 +93,8 @@ public class VersionController {
             if(fromVersion.isPresent()){
                 // Copy and save
                 Version toVersion = this.copyService.createCopyVersion(fromVersion.get(), to);
-                toVersion.setSignature(new PersistenceSignature("SOLODOUV"));
-                toVersion.getSignature().setModification("SOLODOUV");
+                toVersion.setSignature(new PersistenceSignature(principal.getName()));
+                toVersion.getSignature().setModification(principal.getName());
                 document.get().addVersion(toVersion);
 
                 Document saved;

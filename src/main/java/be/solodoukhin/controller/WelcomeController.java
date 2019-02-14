@@ -19,7 +19,7 @@ public class WelcomeController {
         this.projectIdentifier = new ProjectIdentifier(projectName, projectVersion);
     }
 
-    @GetMapping("/")
+    @GetMapping(RoutingMapping.PUBLIC_URL_WELCOME)
     public ProjectIdentifier welcome()
     {
         return this.projectIdentifier;

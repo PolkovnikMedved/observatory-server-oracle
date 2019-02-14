@@ -2,3 +2,4 @@
 /target
 *.iml
 *-gs.properties
+*-test.propeties

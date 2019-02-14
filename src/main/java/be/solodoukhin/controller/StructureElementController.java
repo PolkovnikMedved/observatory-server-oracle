@@ -24,7 +24,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RestController
-@RequestMapping("/structure-element")
+@RequestMapping(RoutingMapping.PROTECTED_URL_STRUCTURE_ELEMENT)
 public class StructureElementController {
     private final StructureElementConverter converter;
     private final StructureElementRepository repository;
